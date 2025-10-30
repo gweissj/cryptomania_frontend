@@ -51,7 +51,6 @@ fun RegisterScreen(
     onRegionChange: (String) -> Unit,
     onCityChange: (String) -> Unit,
     onBirthDateSelect: (LocalDate) -> Unit,
-    onSupportClick: () -> Unit,
     onSubmit: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
@@ -80,17 +79,14 @@ fun RegisterScreen(
     ) {
         Spacer(modifier = Modifier.height(48.dp))
         Text(
-            text = "Register account",
+            text = "\u0421\u043e\u0437\u0434\u0430\u043d\u0438\u0435 \u0430\u043a\u043a\u0430\u0443\u043d\u0442\u0430",
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
         )
         Text(
-            text = TEXT_SUPPORT_HINT,
+            text = TEXT_REGISTER_HINT,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        TextButton(onClick = onSupportClick, modifier = Modifier.align(Alignment.Start)) {
-            Text(text = "Click here")
-        }
         AuthTextField(
             value = state.firstName,
             onValueChange = onFirstNameChange,
@@ -110,16 +106,16 @@ fun RegisterScreen(
         AuthTextField(
             value = state.email,
             onValueChange = onEmailChange,
-            label = "E-mail",
-            placeholder = "Enter your e-mail",
+            label = "\u042d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u0430\u044f \u043f\u043e\u0447\u0442\u0430",
+            placeholder = "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u0443\u044e \u043f\u043e\u0447\u0442\u0443",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             error = state.emailError,
         )
         AuthTextField(
             value = state.password,
             onValueChange = onPasswordChange,
-            label = "Password",
-            placeholder = "Enter your password",
+            label = "\u041f\u0430\u0440\u043e\u043b\u044c",
+            placeholder = "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c",
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
             error = state.passwordError,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -185,7 +181,7 @@ fun RegisterScreen(
                 .minimumInteractiveComponentSize(),
             enabled = state.canSubmit && !state.isLoading,
         ) {
-            Text(text = if (state.isLoading) "Loading..." else "Register now")
+            Text(text = if (state.isLoading) "\u0417\u0430\u0433\u0440\u0443\u0437\u043a\u0430..." else "\u0417\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c\u0441\u044f")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Column(
@@ -268,8 +264,8 @@ private fun PasswordVisibilityToggle(
     }
 }
 
-private const val TEXT_SUPPORT_HINT =
-    "\u0415\u0441\u043b\u0438 \u043d\u0443\u0436\u043d\u0430 \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430 \u2014 \u043d\u0430\u0436\u043c\u0438\u0442\u0435 \u00abClick here\u00bb"
+private const val TEXT_REGISTER_HINT =
+    "\u0417\u0430\u043f\u043e\u043b\u043d\u0438\u0442\u0435 \u0434\u0430\u043d\u043d\u044b\u0435, \u0447\u0442\u043e\u0431\u044b \u0437\u0430\u0440\u0435\u0433\u0438\u0441\u0442\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c\u0441\u044f"
 private const val TEXT_FIRST_NAME = "\u0418\u043c\u044f"
 private const val TEXT_ENTER_FIRST_NAME = "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0438\u043c\u044f"
 private const val TEXT_LAST_NAME = "\u0424\u0430\u043c\u0438\u043b\u0438\u044f"

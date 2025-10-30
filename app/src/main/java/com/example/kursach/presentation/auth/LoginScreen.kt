@@ -50,11 +50,11 @@ fun LoginScreen(
     ) {
         Spacer(modifier = Modifier.height(48.dp))
         Text(
-            text = "Welcome back",
+            text = "\u0421 \u0432\u043e\u0437\u0432\u0440\u0430\u0449\u0435\u043d\u0438\u0435\u043c",
             style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.SemiBold),
         )
         Text(
-            text = "We're thrilled to see you again!",
+            text = "\u0420\u0430\u0434\u044b \u0441\u043d\u043e\u0432\u0430 \u0432\u0430\u0441 \u0432\u0438\u0434\u0435\u0442\u044c!",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -62,8 +62,8 @@ fun LoginScreen(
         AuthTextField(
             value = state.email,
             onValueChange = onEmailChange,
-            label = "E-mail",
-            placeholder = "Enter your e-mail",
+            label = "\u042d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u0430\u044f \u043f\u043e\u0447\u0442\u0430",
+            placeholder = "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u0443\u044e \u043f\u043e\u0447\u0442\u0443",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -74,8 +74,8 @@ fun LoginScreen(
         AuthTextField(
             value = state.password,
             onValueChange = onPasswordChange,
-            label = "Password",
-            placeholder = "Enter your password",
+            label = "\u041f\u0430\u0440\u043e\u043b\u044c",
+            placeholder = "\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043f\u0430\u0440\u043e\u043b\u044c",
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done,
@@ -94,7 +94,7 @@ fun LoginScreen(
             onClick = onForgotPassword,
             modifier = Modifier.align(Alignment.End),
         ) {
-            Text(text = "Forgot Password?")
+            Text(text = "\u0417\u0430\u0431\u044b\u043b\u0438 \u043f\u0430\u0440\u043e\u043b\u044c?")
         }
         if (state.generalError != null) {
             Text(
@@ -110,7 +110,7 @@ fun LoginScreen(
                 .minimumInteractiveComponentSize(),
             enabled = state.canSubmit && !state.isLoading,
         ) {
-            Text(text = if (state.isLoading) "Loading..." else "Log in")
+            Text(text = if (state.isLoading) "\u0417\u0430\u0433\u0440\u0443\u0437\u043a\u0430..." else "\u0412\u043e\u0439\u0442\u0438")
         }
         Spacer(modifier = Modifier.height(8.dp))
         Row(

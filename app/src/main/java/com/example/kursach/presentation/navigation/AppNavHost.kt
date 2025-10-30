@@ -126,11 +126,6 @@ fun AppNavHost(
                     onRegionChange = viewModel::onRegionChanged,
                     onCityChange = viewModel::onCityChanged,
                     onBirthDateSelect = viewModel::onBirthDateSelected,
-                    onSupportClick = {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(TEXT_SUPPORT_HINT)
-                        }
-                    },
                     onSubmit = viewModel::submit,
                     onNavigateBack = { navController.popBackStack() },
                 )
@@ -150,5 +145,3 @@ fun AppNavHost(
 
 private const val TEXT_FORGOT_PASSWORD_HINT =
     "\u0424\u0443\u043d\u043a\u0446\u0438\u044f \u0431\u0443\u0434\u0435\u0442 \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430 \u043f\u043e\u0437\u0436\u0435"
-private const val TEXT_SUPPORT_HINT =
-    "\u0421\u043a\u043e\u0440\u043e \u0437\u0434\u0435\u0441\u044c \u043f\u043e\u044f\u0432\u0438\u0442\u0441\u044f \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0430"
