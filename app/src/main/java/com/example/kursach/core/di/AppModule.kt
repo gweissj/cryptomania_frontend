@@ -10,7 +10,9 @@ import com.example.kursach.core.storage.SecureSessionStorage
 import com.example.kursach.core.storage.SessionStorage
 import com.example.kursach.data.remote.KursachApi
 import com.example.kursach.data.repository.AuthRepositoryImpl
+import com.example.kursach.data.repository.HomeRepositoryImpl
 import com.example.kursach.domain.repository.AuthRepository
+import com.example.kursach.domain.repository.HomeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -88,6 +90,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthRepository(impl: AuthRepositoryImpl): AuthRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideHomeRepository(impl: HomeRepositoryImpl): HomeRepository = impl
 
     @Provides
     @Singleton

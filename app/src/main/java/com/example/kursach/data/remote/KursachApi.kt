@@ -1,6 +1,7 @@
 package com.example.kursach.data.remote
 
 import com.example.kursach.data.remote.dto.AuthTokenResponseDto
+import com.example.kursach.data.remote.dto.CryptoDashboardDto
 import com.example.kursach.data.remote.dto.LoginRequestDto
 import com.example.kursach.data.remote.dto.MessageResponseDto
 import com.example.kursach.data.remote.dto.RegisterRequestDto
@@ -22,4 +23,7 @@ interface KursachApi {
 
     @POST("auth/logout")
     suspend fun logout(): MessageResponseDto
+
+    @GET("crypto/dashboard")
+    suspend fun fetchDashboard(): CryptoDashboardDto
 }
