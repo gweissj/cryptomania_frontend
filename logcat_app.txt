@@ -1,0 +1,55 @@
+--------- beginning of main
+11-14 05:13:42.823 12560 12560 I ample.kursach_2: Late-enabling -Xcheck:jni
+11-14 05:13:43.125 12560 12560 I ample.kursach_2: Using CollectorTypeCMC GC.
+11-14 05:13:43.127 12560 12560 W ample.kursach_2: Unexpected CPU variant for x86: x86_64.
+11-14 05:13:43.127 12560 12560 W ample.kursach_2: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, alderlake, default
+11-14 05:13:43.683 12560 12560 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-14 05:13:44.488 12560 12560 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-14 05:13:44.488 12560 12560 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-14 05:13:44.769 12560 12560 D nativeloader: Configuring clns-9 for other apk /data/app/~~84CIrHtqzGcRwKFAbv1LvQ==/com.example.kursach_2-IKP-703_IT7IduVtTnv0EA==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~84CIrHtqzGcRwKFAbv1LvQ==/com.example.kursach_2-IKP-703_IT7IduVtTnv0EA==/lib/x86_64:/data/app/~~84CIrHtqzGcRwKFAbv1LvQ==/com.example.kursach_2-IKP-703_IT7IduVtTnv0EA==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.example.kursach_2
+11-14 05:13:44.817 12560 12560 I ample.kursach_2: AssetManager2(0x7a4da7f697b8) locale list changing from [] to [en-US]
+11-14 05:13:44.890 12560 12560 V GraphicsEnvironment: Currently set values for:
+11-14 05:13:44.891 12560 12560 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-14 05:13:44.891 12560 12560 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-14 05:13:44.891 12560 12560 V GraphicsEnvironment: com.example.kursach_2 is not listed in per-application setting
+11-14 05:13:44.891 12560 12560 V GraphicsEnvironment: ANGLE allowlist from config: 
+11-14 05:13:44.891 12560 12560 V GraphicsEnvironment: com.example.kursach_2 is not listed in ANGLE allowlist or settings, returning default
+11-14 05:13:44.891 12560 12560 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+--------- beginning of system
+11-14 05:13:45.181 12560 12614 I DisplayManager: Choreographer implicitly registered for the refresh rate.
+11-14 05:13:45.202 12560 12560 I ample.kursach_2: AssetManager2(0x7a4da7f64fd8) locale list changing from [] to [en-US]
+11-14 05:13:45.256 12560 12560 E ashmem  : Pinning is deprecated since Android Q. Please use trim or other methods.
+11-14 05:13:45.416 12560 12614 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-14 05:13:45.419 12560 12614 I EGL_emulation: Opening libGLESv2_emulation.so
+11-14 05:13:45.453 12560 12614 W HWUI    : Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+11-14 05:13:45.454 12560 12614 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-14 05:13:45.577 12560 12617 I ResourceExtractor: Found extracted resources res_timestamp-1-1763097038670
+11-14 05:13:45.578 12560 12616 D FlutterJNI: Beginning load of flutter...
+11-14 05:13:45.579 12560 12617 I ResourceExtractor: Resource version mismatch res_timestamp-1-1763097221061
+11-14 05:13:45.701 12560 12616 D nativeloader: Load /data/app/~~84CIrHtqzGcRwKFAbv1LvQ==/com.example.kursach_2-IKP-703_IT7IduVtTnv0EA==/base.apk!/lib/x86_64/libflutter.so using class loader ns clns-9 (caller=/data/app/~~84CIrHtqzGcRwKFAbv1LvQ==/com.example.kursach_2-IKP-703_IT7IduVtTnv0EA==/base.apk): ok
+11-14 05:13:45.708 12560 12616 D FlutterJNI: flutter (null) was loaded normally!
+11-14 05:13:46.922 12560 12617 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/kernel_blob.bin
+11-14 05:13:46.926 12560 12617 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/vm_snapshot_data
+11-14 05:13:47.153 12560 12617 I ResourceExtractor: Extracted baseline resource assets/flutter_assets/isolate_snapshot_data
+11-14 05:13:47.261 12560 12560 I ample.kursach_2: AssetManager2(0x7a4da7f6d638) locale list changing from [] to [en-US]
+11-14 05:13:47.346 12560 12560 W ample.kursach_2: type=1400 audit(0.0:712): avc:  denied  { read } for  name="max_map_count" dev="proc" ino=68894 scontext=u:r:untrusted_app:s0:c216,c256,c512,c768 tcontext=u:object_r:proc_max_map_count:s0 tclass=file permissive=0 app=com.example.kursach_2
+11-14 05:13:47.468 12560 12619 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
+11-14 05:13:47.510 12560 12560 D DesktopModeFlags: Toggle override initialized to: OVERRIDE_UNSET
+11-14 05:13:47.838 12560 12628 I flutter : The Dart VM service is listening on http://127.0.0.1:35401/N1OQsm5JsqM=/
+11-14 05:13:48.682 12560 12560 I ample.kursach_2: hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityNodeInfo;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported,test-api) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+11-14 05:13:48.683 12560 12560 I ample.kursach_2: hiddenapi: Accessing hidden method Landroid/view/accessibility/AccessibilityRecord;->getSourceNodeId()J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+11-14 05:13:48.685 12560 12560 I ample.kursach_2: hiddenapi: Accessing hidden field Landroid/view/accessibility/AccessibilityNodeInfo;->mChildNodeIds:Landroid/util/LongArray; (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+11-14 05:13:48.687 12560 12560 I ample.kursach_2: hiddenapi: Accessing hidden method Landroid/util/LongArray;->get(I)J (runtime_flags=0, domain=platform, api=unsupported) from Lio/flutter/view/AccessibilityViewEmbedder$ReflectionAccessors; (domain=app) using reflection: allowed
+11-14 05:13:48.849 12560 12560 D CompatChangeReporter: Compat change id reported: 377864165; UID 10216; state: ENABLED
+11-14 05:13:48.994 12560 12560 W HWUI    : Unknown dataspace 0
+11-14 05:13:53.354 12560 12560 I Choreographer: Skipped 259 frames!  The application may be doing too much work on its main thread.
+11-14 05:13:53.427 12560 12564 I ample.kursach_2: Compiler allocated 5042KB to compile void android.view.ViewRootImpl.performTraversals()
+11-14 05:13:53.538 12560 12560 I WindowExtensionsImpl: Initializing Window Extensions, vendor API level=9, activity embedding enabled=true
+11-14 05:13:55.556 12560 12682 D ProfileInstaller: Installing profile for com.example.kursach_2
+11-14 05:13:55.736 12560 12560 I Choreographer: Skipped 113 frames!  The application may be doing too much work on its main thread.
+11-14 05:13:55.886 12560 12560 D WindowLayoutComponentImpl: Register WindowLayoutInfoListener on Context=com.example.kursach_2.MainActivity@d7c4e46, of which baseContext=android.app.ContextImpl@97f61cd
+11-14 05:13:55.915 12560 12595 I HWUI    : Davey! duration=2015ms; Flags=1, FrameTimelineVsyncId=230570, IntendedVsync=3816235678430, Vsync=3818119011688, InputEventId=0, HandleInputStart=3818126263400, AnimationStart=3818126319900, PerformTraversalsStart=3818126384800, DrawStart=3818150713000, FrameDeadline=3816252345096, FrameStartTime=3818124612500, FrameInterval=16666666, WorkloadTarget=16666666, SyncQueued=3818158902100, SyncStart=3818161098500, IssueDrawCommandsStart=3818161727200, SwapBuffers=3818215053300, FrameCompleted=3818253412800, DequeueBufferDuration=31803200, QueueBufferDuration=808300, GpuCompleted=3818237529000, SwapBuffersCompleted=3818253412800, DisplayPresentTime=134466242863700, CommandSubmissionCompleted=3818215053300, 
+11-14 05:13:57.876 12560 12560 I ample.kursach_2: AssetManager2(0x7a4da7f7ec58) locale list changing from [] to [en-US]
+11-14 05:13:58.259 12560 12560 D InsetsController: hide(ime(), fromIme=false)
+11-14 05:13:58.260 12560 12560 I ImeTracker: com.example.kursach_2:e3a3b87d: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+11-14 05:13:58.264 12560 12560 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=io.flutter.embedding.android.FlutterActivity$1@7aa8593
