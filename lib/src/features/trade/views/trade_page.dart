@@ -38,7 +38,7 @@ class _TradePageState extends ConsumerState<TradePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Bought ${next.lastTrade!.symbol} for \$${next.lastTrade!.spent.toStringAsFixed(2)}',
+              'Bought ${next.lastTrade!.symbol} for \$${next.lastTrade!.spent.toStringAsFixed(2)} via ${next.lastTrade!.priceSource}',
             ),
           ),
         );
@@ -133,6 +133,16 @@ class _TradePageState extends ConsumerState<TradePage> {
             const SizedBox(height: 16),
             if (tradeState.selectedAsset != null)
               _SelectedAssetCard(asset: tradeState.selectedAsset!),
+            if (tradeState.selectedAsset != null) ...[
+              const SizedBox(height: 12),
+              _PriceOptions(
+                quotes: tradeState.quotes,
+                loading: tradeState.quotesLoading,
+                selectedSource: tradeState.selectedSource,
+                onSelect: (source) =>
+                    ref.read(tradeControllerProvider.notifier).selectSource(source),
+              ),
+            ],
             const SizedBox(height: 12),
             TextField(
               controller: _amountController,
@@ -320,6 +330,106 @@ class _SelectedAssetCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PriceOptions extends StatelessWidget {
+  const _PriceOptions({
+    required this.quotes,
+    required this.loading,
+    required this.selectedSource,
+    required this.onSelect,
+  });
+
+  final List<PriceQuote> quotes;
+  final bool loading;
+  final String selectedSource;
+  final ValueChanged<String> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (quotes.isEmpty) {
+      return const Text('Нет данных о ценах. Попробуйте обновить.');
+    }
+
+    final cheapest = quotes.map((e) => e.price).reduce(
+          (value, element) => element < value ? element : value,
+        );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Цена из двух источников — выбери выгоднее',
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        ...quotes.map((quote) {
+          final isCheapest = quote.price <= cheapest;
+          final isSelected = quote.source == selectedSource;
+          final colorScheme = Theme.of(context).colorScheme;
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isSelected
+                    ? colorScheme.primary
+                    : Colors.grey.withAlpha((0.3 * 255).round()),
+                width: isSelected ? 1.6 : 1,
+              ),
+              color: isCheapest
+                  ? colorScheme.primary.withAlpha((0.08 * 255).round())
+                  : colorScheme.surfaceVariant.withAlpha((0.4 * 255).round()),
+            ),
+            child: ListTile(
+              onTap: () => onSelect(quote.source),
+              title: Text(
+                quote.source.toUpperCase(),
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              subtitle: isCheapest
+                  ? const Text('Дешевле сейчас')
+                  : const Text('Выше цена, но доступно к покупке'),
+              trailing: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    formatCurrency(quote.price, 'USD'),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  if (isSelected)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Icon(
+                        Icons.check_circle,
+                        color: colorScheme.primary,
+                        size: 18,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }),
+        if (quotes.length < 2)
+          const Padding(
+            padding: EdgeInsets.only(top: 6),
+            child: Text(
+              'Сейчас доступен только один источник цены. Покупка возможна по нему.',
+            ),
+          ),
+      ],
     );
   }
 }

@@ -10,4 +10,8 @@ abstract class MarketMoversRepository {
     String? query,
     required int limit,
   });
+
+  Future<List<PriceQuote>> fetchQuotes({
+    required String assetId,
+  });
 }

@@ -55,6 +55,7 @@ class TradeExecution {
     required this.cashBalance,
     required this.totalBalance,
     required this.executedAt,
+    required this.priceSource,
   });
 
   final String assetId;
@@ -66,4 +67,5 @@ class TradeExecution {
   final double cashBalance;
   final double totalBalance;
   final DateTime executedAt;
+  final String priceSource;
 }

@@ -111,7 +111,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     onPressed: () =>
                         ref.read(mainTabProvider.notifier).state = MainTab.trade,
                     icon: const Icon(Icons.add_shopping_cart_outlined),
-                    label: const Text('Buy crypto'),
+                    label: const Text('Buy kripto'),
                   ),
                   const SizedBox(height: 12),
                   BalanceSection(data: homeState.dashboard!),

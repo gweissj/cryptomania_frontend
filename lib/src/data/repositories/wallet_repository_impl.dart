@@ -24,8 +24,13 @@ class WalletRepositoryImpl implements WalletRepository {
   Future<TradeExecution> buyAsset({
     required String assetId,
     required double amountUsd,
+    required String priceSource,
   }) async {
-    final dto = await _api.buyAsset(assetId: assetId, amountUsd: amountUsd);
+    final dto = await _api.buyAsset(
+      assetId: assetId,
+      amountUsd: amountUsd,
+      priceSource: priceSource,
+    );
     return dto.toDomain();
   }
 
