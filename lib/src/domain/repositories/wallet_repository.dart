@@ -9,6 +9,7 @@ abstract class WalletRepository {
   Future<TradeExecution> buyAsset({
     required String assetId,
     required double amountUsd,
+    required String priceSource,
   });
 
   Future<List<WalletTransaction>> fetchTransactions();

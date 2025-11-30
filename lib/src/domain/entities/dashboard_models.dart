@@ -100,3 +100,17 @@ class PortfolioAsset {
   final double change24hPct;
   final String? imageUrl;
 }
+
+class PriceQuote {
+  const PriceQuote({
+    required this.assetId,
+    required this.symbol,
+    required this.source,
+    required this.price,
+  });
+
+  final String assetId;
+  final String symbol;
+  final String source; // e.g. coincap, coingecko
+  final double price;
+}

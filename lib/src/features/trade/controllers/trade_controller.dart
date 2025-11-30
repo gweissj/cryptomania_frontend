@@ -25,7 +25,12 @@ class TradeController extends StateNotifier<TradeState> {
   final WalletRepository _walletRepository;
 
   Future<void> loadAssets({String? query}) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(
+      isLoading: true,
+      error: null,
+      quotes: const [],
+      selectedSource: 'coincap',
+    );
     try {
       final assets = query == null || query.isEmpty
           ? await _assetsRepository.fetchTopByMarketCap(
@@ -33,22 +38,31 @@ class TradeController extends StateNotifier<TradeState> {
               limit: 20,
             )
           : await _assetsRepository.search(query: query, limit: 30);
+      final selected = assets.isNotEmpty ? assets.first : null;
       state = state.copyWith(
         isLoading: false,
         assets: assets,
-        selectedAsset: assets.isNotEmpty ? assets.first : null,
+        selectedAsset: selected,
       );
+      if (selected != null) {
+        await _loadQuotesFor(selected.id);
+      }
     } catch (error) {
       state = state.copyWith(isLoading: false, error: error.toString());
     }
   }
 
-  void selectAsset(MarketMover asset) {
+  Future<void> selectAsset(MarketMover asset) async {
     state = state.copyWith(selectedAsset: asset, error: null);
+    await _loadQuotesFor(asset.id);
   }
 
   void setAmountInput(String value) {
     state = state.copyWith(amountInput: value, error: null);
+  }
+
+  void selectSource(String source) {
+    state = state.copyWith(selectedSource: source, error: null);
   }
 
   void clearSuccess() {
@@ -76,11 +90,13 @@ class TradeController extends StateNotifier<TradeState> {
       final result = await _walletRepository.buyAsset(
         assetId: asset.id,
         amountUsd: amount,
+        priceSource: state.selectedSource,
       );
       _ref.read(walletControllerProvider.notifier).refresh();
       state = state.copyWith(
         isProcessing: false,
         lastTrade: result,
+        amountInput: '',
       );
     } catch (error) {
       state = state.copyWith(isProcessing: false, error: error.toString());
@@ -95,6 +111,9 @@ class TradeState {
     this.assets = const [],
     this.selectedAsset,
     this.amountInput = '',
+    this.quotes = const [],
+    this.selectedSource = 'coincap',
+    this.quotesLoading = false,
     this.error,
     this.lastTrade,
   });
@@ -104,6 +123,9 @@ class TradeState {
   final List<MarketMover> assets;
   final MarketMover? selectedAsset;
   final String amountInput;
+  final List<PriceQuote> quotes;
+  final String selectedSource;
+  final bool quotesLoading;
   final String? error;
   final TradeExecution? lastTrade;
 
@@ -113,6 +135,9 @@ class TradeState {
     List<MarketMover>? assets,
     MarketMover? selectedAsset,
     String? amountInput,
+    List<PriceQuote>? quotes,
+    String? selectedSource,
+    bool? quotesLoading,
     Object? error = _sentinel,
     TradeExecution? lastTrade,
   }) {
@@ -122,6 +147,9 @@ class TradeState {
       assets: assets ?? this.assets,
       selectedAsset: selectedAsset ?? this.selectedAsset,
       amountInput: amountInput ?? this.amountInput,
+      quotes: quotes ?? this.quotes,
+      selectedSource: selectedSource ?? this.selectedSource,
+      quotesLoading: quotesLoading ?? this.quotesLoading,
       error: error == _sentinel ? this.error : error as String?,
       lastTrade: lastTrade ?? this.lastTrade,
     );
@@ -129,3 +157,25 @@ class TradeState {
 }
 
 const _sentinel = Object();
+
+extension _TradeControllerQuotes on TradeController {
+  Future<void> _loadQuotesFor(String assetId) async {
+    state = state.copyWith(quotesLoading: true, error: null);
+    try {
+      final quotes = await _assetsRepository.fetchQuotes(assetId: assetId);
+      final sortedQuotes = [...quotes]
+        ..sort((a, b) => a.price.compareTo(b.price));
+      final cheapestSource = sortedQuotes.isNotEmpty ? sortedQuotes.first.source : 'coincap';
+      state = state.copyWith(
+        quotes: sortedQuotes,
+        quotesLoading: false,
+        selectedSource: cheapestSource,
+      );
+    } catch (error) {
+      state = state.copyWith(
+        quotesLoading: false,
+        error: error.toString(),
+      );
+    }
+  }
+}

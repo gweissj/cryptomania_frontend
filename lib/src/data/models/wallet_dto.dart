@@ -85,6 +85,7 @@ class TradeExecutionDto {
     required this.cashBalance,
     required this.totalBalance,
     required this.executedAt,
+    required this.priceSource,
   });
 
   final String assetId;
@@ -96,6 +97,7 @@ class TradeExecutionDto {
   final double cashBalance;
   final double totalBalance;
   final String executedAt;
+  final String priceSource;
 
   factory TradeExecutionDto.fromJson(Map<String, dynamic> json) {
     return TradeExecutionDto(
@@ -110,6 +112,7 @@ class TradeExecutionDto {
           (json['portfolio_balance'] as num?)?.toDouble() ??
           0.0,
       executedAt: json['executed_at'] as String? ?? '',
+      priceSource: json['price_source'] as String? ?? 'coincap',
     );
   }
 }

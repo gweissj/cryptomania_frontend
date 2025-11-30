@@ -1,5 +1,6 @@
 import '../../domain/entities/dashboard_models.dart';
 import '../../domain/repositories/market_movers_repository.dart';
+import '../mappers/price_quote_mapper.dart';
 import '../services/kursach_api.dart';
 
 class MarketMoversRepositoryImpl implements MarketMoversRepository {
@@ -51,5 +52,11 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
           ),
         )
         .toList();
+  }
+
+  @override
+  Future<List<PriceQuote>> fetchQuotes({required String assetId}) async {
+    final response = await _api.fetchQuotes(assetId: assetId);
+    return response.map((e) => e.toDomain()).toList();
   }
 }

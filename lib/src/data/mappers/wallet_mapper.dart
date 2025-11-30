@@ -58,6 +58,7 @@ extension TradeExecutionDtoMapper on TradeExecutionDto {
       cashBalance: cashBalance,
       totalBalance: totalBalance,
       executedAt: DateTime.tryParse(executedAt) ?? DateTime.now(),
+      priceSource: priceSource,
     );
   }
 }

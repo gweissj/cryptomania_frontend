@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../models/auth_models.dart';
 import '../models/dashboard_dto.dart';
+import '../models/price_quote_dto.dart';
 import '../models/user_dto.dart';
 import '../models/wallet_dto.dart';
 
@@ -120,12 +121,14 @@ class KursachApi {
   Future<TradeExecutionDto> buyAsset({
     required String assetId,
     required double amountUsd,
+    required String priceSource,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/crypto/buy',
       data: {
         'asset_id': assetId,
         'amount_usd': amountUsd,
+        'source': priceSource,
       },
     );
     return TradeExecutionDto.fromJson(response.data ?? const {});
@@ -137,6 +140,15 @@ class KursachApi {
     return data
         .whereType<Map<String, dynamic>>()
         .map(WalletTransactionDto.fromJson)
+        .toList();
+  }
+
+  Future<List<PriceQuoteDto>> fetchQuotes({required String assetId}) async {
+    final response = await _dio.get<List<dynamic>>('/crypto/quotes/$assetId');
+    final data = response.data ?? [];
+    return data
+        .whereType<Map<String, dynamic>>()
+        .map(PriceQuoteDto.fromJson)
         .toList();
   }
 }
