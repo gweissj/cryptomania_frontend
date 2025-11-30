@@ -84,7 +84,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                 value: state.newPassword,
                 onChanged: controller.onPasswordChanged,
                 label: 'Сменить пароль',
-                placeholder: '�������� ����� ��஫�',
+                placeholder: '...',
                 obscureText: !_passwordVisible,
                 textInputAction: TextInputAction.next,
                 errorText: state.passwordError,
