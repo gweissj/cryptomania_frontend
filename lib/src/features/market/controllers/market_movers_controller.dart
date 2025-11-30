@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
 import '../../../domain/entities/dashboard_models.dart';
 import '../../../domain/repositories/market_movers_repository.dart';
+import '../../../utils/error_handler.dart';
 
 final marketMoversControllerProvider =
     StateNotifierProvider.autoDispose<MarketMoversController, MarketMoversState>((ref) {
@@ -34,7 +35,7 @@ class MarketMoversController extends StateNotifier<MarketMoversState> {
     } catch (error) {
       state = state.copyWith(
         isLoading: false,
-        error: error.toString(),
+        error: AppErrorHandler.readableMessage(error),
       );
     }
   }

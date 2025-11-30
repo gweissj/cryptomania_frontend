@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/wallet.dart';
+import '../../../utils/error_handler.dart';
 import '../../home/controllers/home_controller.dart';
 import '../controllers/wallet_controller.dart';
 
@@ -26,8 +27,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
   Widget build(BuildContext context) {
     ref.listen<WalletState>(walletControllerProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(next.error!)));
+        AppErrorHandler.showErrorSnackBar(context, next.error);
       }
     });
 
@@ -94,10 +94,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                                     ) ??
                                     0;
                                 if (value <= 0) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Enter a valid deposit amount'),
-                                    ),
+                                  AppErrorHandler.showErrorSnackBar(
+                                    context,
+                                    'Enter a valid deposit amount',
                                   );
                                   return;
                                 }

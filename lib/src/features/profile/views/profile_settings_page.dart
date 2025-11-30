@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../common/widgets/auth_text_field.dart';
+import '../../../utils/error_handler.dart';
 import '../controllers/profile_settings_controller.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
@@ -25,9 +26,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     ) {
       if (next.successProfile != null &&
           next.successProfile != previous?.successProfile) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('�������� �����������')));
+        AppErrorHandler.showErrorSnackBar(context, 'Profile updated');
         ref
             .read(profileSettingsControllerProvider.notifier)
             .acknowledgeSuccess();

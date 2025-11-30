@@ -6,6 +6,7 @@ import '../../../core/providers.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../domain/usecases/registration_data.dart';
+import '../../../utils/error_handler.dart';
 import '../../common/utils/validation_utils.dart';
 
 final registerControllerProvider =
@@ -148,7 +149,7 @@ class RegisterController extends StateNotifier<RegisterState> {
       }
       return 'Ошибка сервера: $status';
     }
-    return error.toString();
+    return AppErrorHandler.readableMessage(error);
   }
 }
 

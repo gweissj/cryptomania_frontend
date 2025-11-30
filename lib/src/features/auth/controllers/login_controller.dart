@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../../domain/repositories/auth_repository.dart';
+import '../../../utils/error_handler.dart';
 import '../../common/utils/validation_utils.dart';
 
 final loginControllerProvider =
@@ -67,7 +68,7 @@ class LoginController extends StateNotifier<LoginState> {
         return 'Ошибка сервера: $statusCode';
       }
     }
-    return error.toString();
+    return AppErrorHandler.readableMessage(error);
   }
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/dashboard_models.dart';
+import '../../../utils/error_handler.dart';
 import '../../navigation/main_navigation_controller.dart';
 import '../../home/controllers/home_controller.dart';
 import '../../wallet/controllers/wallet_controller.dart';
@@ -30,17 +31,12 @@ class _TradePageState extends ConsumerState<TradePage> {
   Widget build(BuildContext context) {
     ref.listen<TradeState>(tradeControllerProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!)),
-        );
+        AppErrorHandler.showErrorSnackBar(context, next.error);
       }
       if (next.lastTrade != null && next.lastTrade != previous?.lastTrade) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Bought ${next.lastTrade!.symbol} for \$${next.lastTrade!.spent.toStringAsFixed(2)} via ${next.lastTrade!.priceSource}',
-            ),
-          ),
+        AppErrorHandler.showErrorSnackBar(
+          context,
+          'Bought ${next.lastTrade!.symbol} for \$${next.lastTrade!.spent.toStringAsFixed(2)} via ${next.lastTrade!.priceSource}',
         );
         _amountController.clear();
         ref.read(homeControllerProvider.notifier).refresh();

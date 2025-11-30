@@ -13,7 +13,6 @@ class AppConfig {
 
   static const coinGeckoApiKey = String.fromEnvironment(
     'COINGECKO_API_KEY',
-    defaultValue: '',
+    defaultValue: 'CG-Wu4E9yhdxZKoAnGqJhZLG2j4',
   );
 }
-

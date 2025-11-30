@@ -21,6 +21,7 @@ extension DashboardDtoMapper on CryptoDashboardDto {
               change24hPct: e.change24hPct,
               volume24h: e.volume24h,
               imageUrl: e.imageUrl,
+              sparkline: e.sparkline,
             ),
           )
           .toList(),

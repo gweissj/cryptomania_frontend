@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
 import '../../../domain/entities/dashboard_models.dart';
 import '../../../domain/repositories/dashboard_repository.dart';
+import '../../../utils/error_handler.dart';
 
 final homeControllerProvider =
     StateNotifierProvider<HomeController, HomeState>((ref) {
@@ -43,7 +44,7 @@ class HomeController extends StateNotifier<HomeState> {
       state = state.copyWith(
         isLoading: false,
         isRefreshing: false,
-        error: error.toString(),
+        error: AppErrorHandler.readableMessage(error),
       );
     }
   }

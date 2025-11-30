@@ -25,7 +25,7 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
             change24hPct: e.change24hPct,
             volume24h: e.volume24h,
             imageUrl: e.imageUrl,
-            sparkline: null,
+            sparkline: e.sparkline,
           ),
         )
         .toList();
@@ -48,7 +48,7 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
             change24hPct: e.change24hPct,
             volume24h: e.volume24h,
             imageUrl: e.imageUrl,
-            sparkline: null,
+            sparkline: e.sparkline,
           ),
         )
         .toList();

@@ -4,6 +4,7 @@ import '../../../core/providers.dart';
 import '../../../data/repositories/auth_repository_impl.dart';
 import '../../../domain/entities/user_profile.dart';
 import '../../../domain/repositories/auth_repository.dart';
+import '../../../utils/error_handler.dart';
 
 final sessionControllerProvider =
     StateNotifierProvider<SessionController, SessionState>((ref) {
@@ -30,7 +31,7 @@ class SessionController extends StateNotifier<SessionState> {
       state = SessionState(
         isLoading: false,
         user: null,
-        error: error.toString(),
+        error: AppErrorHandler.readableMessage(error),
       );
     }
   }
@@ -48,7 +49,7 @@ class SessionController extends StateNotifier<SessionState> {
       state = SessionState(
         isLoading: false,
         user: null,
-        error: error.toString(),
+        error: AppErrorHandler.readableMessage(error),
       );
     }
   }

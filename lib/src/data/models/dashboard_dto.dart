@@ -71,6 +71,7 @@ class MarketMoverDto {
     required this.change24hPct,
     required this.volume24h,
     this.imageUrl,
+    this.sparkline,
   });
 
   final String id;
@@ -81,6 +82,7 @@ class MarketMoverDto {
   final double change24hPct;
   final double volume24h;
   final String? imageUrl;
+  final List<double>? sparkline;
 
   factory MarketMoverDto.fromJson(Map<String, dynamic> json) {
     return MarketMoverDto(
@@ -92,6 +94,10 @@ class MarketMoverDto {
       change24hPct: (json['change_24h_pct'] as num?)?.toDouble() ?? 0.0,
       volume24h: (json['volume_24h'] as num?)?.toDouble() ?? 0.0,
       imageUrl: json['image_url'] as String?,
+      sparkline: (json['sparkline'] as List<dynamic>?)
+          ?.whereType<num>()
+          .map((e) => e.toDouble())
+          .toList(),
     );
   }
 }

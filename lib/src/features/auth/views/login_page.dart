@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/app_router.dart';
 import '../../../features/common/widgets/auth_text_field.dart';
+import '../../../utils/error_handler.dart';
 import '../../session/controllers/session_controller.dart';
 import '../controllers/login_controller.dart';
 
@@ -84,8 +85,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Функция будет доступна позже')),
+                    AppErrorHandler.showErrorSnackBar(
+                      context,
+                      'Функция будет доступна позже',
                     );
                   },
                   child: const Text('Забыли пароль?'),

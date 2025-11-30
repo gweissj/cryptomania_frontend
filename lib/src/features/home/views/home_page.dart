@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../core/app_router.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/dashboard_models.dart';
+import '../../../utils/error_handler.dart';
 import '../../navigation/main_navigation_controller.dart';
 import '../../session/controllers/session_controller.dart';
 import '../controllers/home_controller.dart';
@@ -26,8 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         if (!mounted) {
           return;
         }
-        final messenger = ScaffoldMessenger.of(context);
-        messenger.showSnackBar(SnackBar(content: Text(next.error!)));
+        AppErrorHandler.showErrorSnackBar(context, next.error);
         ref.read(homeControllerProvider.notifier).clearError();
       }
     });
@@ -131,9 +131,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                   const SizedBox(height: 24),
                   const SectionHeader(title: 'Portfolio'),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Здесь появится ваш портфель после добавления активов',
-                    style: TextStyle(color: Colors.grey),
+                  PortfolioSection(
+                    assets: homeState.dashboard!.portfolio,
+                    currency: homeState.dashboard!.currency,
+                    holdingsBalance: homeState.dashboard!.holdingsBalance,
                   ),
                   const SizedBox(height: 24),
                   Text(
@@ -376,6 +377,134 @@ class MarketMoverCard extends StatelessWidget {
             ).textTheme.labelLarge?.copyWith(color: Colors.white),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class PortfolioSection extends StatelessWidget {
+  const PortfolioSection({
+    required this.assets,
+    required this.currency,
+    required this.holdingsBalance,
+    super.key,
+  });
+
+  final List<PortfolioAsset> assets;
+  final String currency;
+  final double holdingsBalance;
+
+  @override
+  Widget build(BuildContext context) {
+    final totalText = formatCurrency(holdingsBalance, currency);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withAlpha((0.4 * 255).round()),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Purchased assets',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${assets.length} items',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(color: Colors.grey),
+                  ),
+                ],
+              ),
+              Text(
+                totalText,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (assets.isEmpty)
+          const Text(
+            'You have not purchased any crypto yet',
+            style: TextStyle(color: Colors.grey),
+          )
+        else
+          ...assets.map(
+            (asset) => PortfolioAssetTile(
+              asset: asset,
+              currency: currency,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class PortfolioAssetTile extends StatelessWidget {
+  const PortfolioAssetTile({
+    required this.asset,
+    required this.currency,
+    super.key,
+  });
+
+  final PortfolioAsset asset;
+  final String currency;
+
+  @override
+  Widget build(BuildContext context) {
+    final value = formatCurrency(asset.value, currency);
+    final quantity = asset.quantity >= 1
+        ? asset.quantity.toStringAsFixed(4)
+        : asset.quantity.toStringAsFixed(6);
+    final change = formatSignedPercent(asset.change24hPct);
+    final changePositive = asset.change24hPct >= 0;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: AssetAvatar(imageUrl: asset.imageUrl, title: asset.symbol),
+        title: Text(
+          asset.name,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text('$quantity ${asset.symbol}'),
+        trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              change,
+              style: TextStyle(
+                color: changePositive ? _positiveColor : _negativeColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

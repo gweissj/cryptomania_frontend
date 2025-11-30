@@ -5,6 +5,7 @@ import '../../../domain/entities/dashboard_models.dart';
 import '../../../domain/entities/wallet.dart';
 import '../../../domain/repositories/market_movers_repository.dart';
 import '../../../domain/repositories/wallet_repository.dart';
+import '../../../utils/error_handler.dart';
 import '../../wallet/controllers/wallet_controller.dart';
 
 final tradeControllerProvider =
@@ -48,7 +49,10 @@ class TradeController extends StateNotifier<TradeState> {
         await _loadQuotesFor(selected.id);
       }
     } catch (error) {
-      state = state.copyWith(isLoading: false, error: error.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: AppErrorHandler.readableMessage(error),
+      );
     }
   }
 
@@ -99,7 +103,10 @@ class TradeController extends StateNotifier<TradeState> {
         amountInput: '',
       );
     } catch (error) {
-      state = state.copyWith(isProcessing: false, error: error.toString());
+      state = state.copyWith(
+        isProcessing: false,
+        error: AppErrorHandler.readableMessage(error),
+      );
     }
   }
 }
@@ -174,7 +181,7 @@ extension _TradeControllerQuotes on TradeController {
     } catch (error) {
       state = state.copyWith(
         quotesLoading: false,
-        error: error.toString(),
+        error: AppErrorHandler.readableMessage(error),
       );
     }
   }

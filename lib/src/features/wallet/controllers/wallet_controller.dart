@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
 import '../../../domain/entities/wallet.dart';
 import '../../../domain/repositories/wallet_repository.dart';
+import '../../../utils/error_handler.dart';
 
 final walletControllerProvider =
     StateNotifierProvider<WalletController, WalletState>((ref) {
@@ -28,7 +29,10 @@ class WalletController extends StateNotifier<WalletState> {
         transactions: transactions,
       );
     } catch (error) {
-      state = state.copyWith(isLoading: false, error: error.toString());
+      state = state.copyWith(
+        isLoading: false,
+        error: AppErrorHandler.readableMessage(error),
+      );
     }
   }
 
@@ -47,7 +51,10 @@ class WalletController extends StateNotifier<WalletState> {
         transactions: transactions,
       );
     } catch (error) {
-      state = state.copyWith(isProcessing: false, error: error.toString());
+      state = state.copyWith(
+        isProcessing: false,
+        error: AppErrorHandler.readableMessage(error),
+      );
     }
   }
 }

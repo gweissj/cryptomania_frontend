@@ -7,6 +7,7 @@ import '../../../domain/repositories/auth_repository.dart';
 import '../../../domain/usecases/profile_update_data.dart';
 import '../../common/utils/validation_utils.dart';
 import '../../session/controllers/session_controller.dart';
+import '../../../utils/error_handler.dart';
 
 final profileSettingsControllerProvider =
 StateNotifierProvider.autoDispose<
@@ -146,7 +147,10 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       );
     } catch (error) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, generalError: error.toString());
+      state = state.copyWith(
+        isLoading: false,
+        generalError: AppErrorHandler.readableMessage(error),
+      );
     }
   }
 
