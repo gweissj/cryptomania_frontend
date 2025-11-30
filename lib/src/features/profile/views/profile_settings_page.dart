@@ -26,7 +26,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     ) {
       if (next.successProfile != null &&
           next.successProfile != previous?.successProfile) {
-        AppErrorHandler.showErrorSnackBar(context, 'Profile updated');
+        AppErrorHandler.showErrorSnackBar(context, 'Обновить данные профиля');
         ref
             .read(profileSettingsControllerProvider.notifier)
             .acknowledgeSuccess();
@@ -41,7 +41,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('����ன�� ��������'),
+        title: const Text('Назад?'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
@@ -55,8 +55,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               AuthTextField(
                 value: state.firstName,
                 onChanged: controller.onFirstNameChanged,
-                label: '���',
-                placeholder: '������ ���',
+                label: 'Имя',
+                placeholder: 'Введите имя',
                 textInputAction: TextInputAction.next,
                 errorText: state.firstNameError,
               ),
@@ -64,8 +64,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               AuthTextField(
                 value: state.lastName,
                 onChanged: controller.onLastNameChanged,
-                label: '�������',
-                placeholder: '������ 䠬����',
+                label: 'Фамилия',
+                placeholder: 'Введите фамилию',
                 textInputAction: TextInputAction.next,
                 errorText: state.lastNameError,
               ),
@@ -73,8 +73,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               AuthTextField(
                 value: state.email,
                 onChanged: controller.onEmailChanged,
-                label: '�����஭��� ����',
-                placeholder: '������ �����஭��� �����',
+                label: 'email',
+                placeholder: 'test@gmail.com',
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 errorText: state.emailError,
@@ -83,7 +83,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               AuthTextField(
                 value: state.newPassword,
                 onChanged: controller.onPasswordChanged,
-                label: '����� ��஫�',
+                label: 'Сменить пароль',
                 placeholder: '�������� ����� ��஫�',
                 obscureText: !_passwordVisible,
                 textInputAction: TextInputAction.next,
@@ -98,7 +98,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '������� ��� ����, ���� �� ������ ᮢ����� ��஫�',
+                  '...?',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -106,8 +106,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               AuthTextField(
                 value: state.repeatPassword,
                 onChanged: controller.onRepeatPasswordChanged,
-                label: '��������� ��஫�',
-                placeholder: '��������� ��஫�',
+                label: 'Повторите новый пароль',
+                placeholder: 'Повторите пароль',
                 obscureText: !_repeatPasswordVisible,
                 textInputAction: TextInputAction.next,
                 errorText: state.repeatPasswordError,
@@ -122,8 +122,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               AuthTextField(
                 value: state.formattedBirthDate,
                 onChanged: (_) {},
-                label: '��� ஦�����',
-                placeholder: '��� ��������� ��������',
+                label: 'Дата рождения',
+                placeholder: 'Вам должно быть больше 18 лет',
                 readOnly: true,
                 enabled: false,
               ),
@@ -131,7 +131,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  '���� �������� ��� ����ந���',
+                  '..?',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -154,7 +154,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                   width: double.infinity,
                   child: Center(
                     child: Text(
-                      state.isLoading ? '��������...' : '��������� ��������',
+                      state.isLoading ? 'Загрузка...' : '?..',
                     ),
                   ),
                 ),
