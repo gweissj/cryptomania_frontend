@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../models/auth_models.dart';
 import '../models/dashboard_dto.dart';
 import '../models/price_quote_dto.dart';
+import '../models/sell_dto.dart';
 import '../models/user_dto.dart';
 import '../models/wallet_dto.dart';
 
@@ -150,5 +151,109 @@ class KursachApi {
         .whereType<Map<String, dynamic>>()
         .map(PriceQuoteDto.fromJson)
         .toList();
+  }
+
+  Future<SellDashboardDto> fetchSellOverview() async {
+    final response = await _dio.get<Map<String, dynamic>>('/crypto/sell/overview');
+    return SellDashboardDto.fromJson(response.data ?? const {});
+  }
+
+  Future<SellPreviewDto> previewSell({
+    required String assetId,
+    double? quantity,
+    double? amountUsd,
+    required String priceSource,
+  }) async {
+    final body = <String, dynamic>{
+      'asset_id': assetId,
+      'source': priceSource,
+    };
+    if (quantity != null) {
+      body['quantity'] = quantity;
+    }
+    if (amountUsd != null) {
+      body['amount_usd'] = amountUsd;
+    }
+
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/crypto/sell/preview',
+      data: body,
+    );
+    return SellPreviewDto.fromJson(response.data ?? const {});
+  }
+
+  Future<SellExecutionDto> sellAsset({
+    required String assetId,
+    double? quantity,
+    double? amountUsd,
+    required String priceSource,
+  }) async {
+    final body = <String, dynamic>{
+      'asset_id': assetId,
+      'source': priceSource,
+    };
+    if (quantity != null) {
+      body['quantity'] = quantity;
+    }
+    if (amountUsd != null) {
+      body['amount_usd'] = amountUsd;
+    }
+
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/crypto/sell',
+      data: body,
+    );
+    return SellExecutionDto.fromJson(response.data ?? const {});
+  }
+
+  Future<DeviceCommandDto> dispatchDeviceCommand({
+    required String action,
+    Map<String, dynamic>? payload,
+    String sourceDevice = 'mobile',
+    String? sourceDeviceId,
+    String targetDevice = 'desktop',
+    String? targetDeviceId,
+    int ttlSeconds = 60,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/crypto/device-commands',
+      data: {
+        'action': action,
+        if (payload != null) 'payload': payload,
+        'source_device': sourceDevice,
+        if (sourceDeviceId != null) 'source_device_id': sourceDeviceId,
+        'target_device': targetDevice,
+        if (targetDeviceId != null) 'target_device_id': targetDeviceId,
+        'ttl_seconds': ttlSeconds,
+      },
+    );
+    return DeviceCommandDto.fromJson(response.data ?? const {});
+  }
+
+  Future<DeviceCommandPollDto> pollDeviceCommands({
+    String targetDevice = 'desktop',
+    String? targetDeviceId,
+    int limit = 10,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/crypto/device-commands/poll',
+      queryParameters: {
+        'target_device': targetDevice,
+        if (targetDeviceId != null) 'target_device_id': targetDeviceId,
+        'limit': limit,
+      },
+    );
+    return DeviceCommandPollDto.fromJson(response.data ?? const {});
+  }
+
+  Future<DeviceCommandDto> acknowledgeDeviceCommand({
+    required int commandId,
+    required String status,
+  }) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/crypto/device-commands/$commandId/ack',
+      data: {'status': status},
+    );
+    return DeviceCommandDto.fromJson(response.data ?? const {});
   }
 }

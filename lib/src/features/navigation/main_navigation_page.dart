@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../home/views/home_page.dart';
 import '../market/views/market_movers_page.dart';
+import '../sell/views/sell_page.dart';
 import '../trade/views/trade_page.dart';
 import '../wallet/views/wallet_page.dart';
 import 'main_navigation_controller.dart';
@@ -24,7 +25,7 @@ class MainNavigationPage extends ConsumerWidget {
           HomePage(),
           TradePage(),
           MarketTabPage(),
-          FavoritesPlaceholderPage(),
+          SellPage(),
           WalletPage(),
         ],
       ),
@@ -36,7 +37,7 @@ class MainNavigationPage extends ConsumerWidget {
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.swap_calls), label: 'Trade'),
           BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Market'),
-          BottomNavigationBarItem(icon: Icon(Icons.star_border), label: 'Favorites'),
+          BottomNavigationBarItem(icon: Icon(Icons.sell_outlined), label: 'Sell'),
           BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Wallet'),
         ],
       ),
@@ -75,14 +76,6 @@ class FavoritesPlaceholderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
-      body: const Center(
-        child: Text(
-          'Favorites coming soon',
-          style: TextStyle(color: Colors.grey),
-        ),
-      ),
-    );
+    return const SellPage();
   }
 }
