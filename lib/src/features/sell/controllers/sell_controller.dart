@@ -11,7 +11,7 @@ import '../../home/controllers/home_controller.dart';
 import '../../wallet/controllers/wallet_controller.dart';
 
 final sellControllerProvider =
-    StateNotifierProvider.autoDispose<SellController, SellState>((ref) {
+StateNotifierProvider.autoDispose<SellController, SellState>((ref) {
   final sellRepository = ref.watch(sellRepositoryProvider);
   final deviceRepository = ref.watch(deviceCommandRepositoryProvider);
   final tokenStorage = ref.watch(authTokenStorageProvider);
@@ -20,11 +20,11 @@ final sellControllerProvider =
 
 class SellController extends StateNotifier<SellState> {
   SellController(
-    this._ref,
-    this._sellRepository,
-    this._deviceRepository,
-    this._tokenStorage,
-  ) : super(const SellState(isLoading: true)) {
+      this._ref,
+      this._sellRepository,
+      this._deviceRepository,
+      this._tokenStorage,
+      ) : super(const SellState(isLoading: true)) {
     loadOverview();
   }
 
@@ -190,6 +190,36 @@ class SellController extends StateNotifier<SellState> {
     );
   }
 
+  Future<void> requestDesktopSellSession({String? targetDeviceId}) async {
+    final payload = <String, dynamic>{
+      'requested_at': DateTime.now().toIso8601String(),
+      'source': state.priceSource,
+    };
+
+    final asset = state.selectedAsset;
+    if (asset != null) {
+      payload['preferred_asset_id'] = asset.id;
+      payload['preferred_symbol'] = asset.symbol;
+    }
+
+    final quantity = double.tryParse(state.quantityInput.replaceAll(',', '.'));
+    final amount = double.tryParse(state.amountInput.replaceAll(',', '.'));
+
+    if (quantity != null && quantity > 0) {
+      payload['suggested_quantity'] = quantity;
+    }
+    if (amount != null && amount > 0) {
+      payload['suggested_amount_usd'] = amount;
+    }
+
+    await _dispatchCommand(
+      action: 'REQUEST_DESKTOP_SELL',
+      payload: payload,
+      targetDeviceId: targetDeviceId,
+      ttlSeconds: 300,
+    );
+  }
+
   Future<void> dispatchOpenDesktopDashboard({String? targetDeviceId}) async {
     await _dispatchCommand(
       action: 'OPEN_DESKTOP_DASHBOARD',
@@ -321,7 +351,7 @@ class SellState {
       error: error == _sentinel ? this.error : error as String?,
       pendingCommands: pendingCommands ?? this.pendingCommands,
       commandMessage:
-          commandMessage == _sentinel ? this.commandMessage : commandMessage as String?,
+      commandMessage == _sentinel ? this.commandMessage : commandMessage as String?,
       commandError: commandError == _sentinel ? this.commandError : commandError as String?,
     );
   }

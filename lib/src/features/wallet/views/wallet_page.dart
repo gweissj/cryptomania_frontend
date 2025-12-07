@@ -53,158 +53,172 @@ class _WalletPageState extends ConsumerState<WalletPage> {
       body: summary == null
           ? const Center(child: Text('No wallet data yet'))
           : RefreshIndicator(
-              onRefresh: () => ref.read(walletControllerProvider.notifier).refresh(),
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _SummaryCard(summary: summary),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Deposit USD',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _amountController,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                            signed: false,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Amount',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+        onRefresh: () => ref.read(walletControllerProvider.notifier).refresh(),
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _SummaryCard(summary: summary),
+            const SizedBox(height: 16),
+            Text(
+              'Deposit USD',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _amountController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                      signed: false,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Amount',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      const SizedBox(width: 12),
-                      FilledButton(
-                        onPressed: state.isProcessing
-                            ? null
-                            : () async {
-                                final value = double.tryParse(
-                                      _amountController.text.replaceAll(',', '.'),
-                                    ) ??
-                                    0;
-                                if (value <= 0) {
-                                  AppErrorHandler.showErrorSnackBar(
-                                    context,
-                                    'Enter a valid deposit amount',
-                                  );
-                                  return;
-                                }
-                                await ref
-                                    .read(walletControllerProvider.notifier)
-                                    .deposit(value);
-                                await ref.read(homeControllerProvider.notifier).refresh();
-                                _amountController.clear();
-                              },
-                        child: state.isProcessing
-                            ? const SizedBox(
-                                height: 18,
-                                width: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : const Text('Deposit'),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                FilledButton(
+                  onPressed: state.isProcessing
+                      ? null
+                      : () async {
+                    final value = double.tryParse(
+                      _amountController.text.replaceAll(',', '.'),
+                    ) ??
+                        0;
+                    if (value <= 0) {
+                      AppErrorHandler.showErrorSnackBar(
+                        context,
+                        'Enter a valid deposit amount',
+                      );
+                      return;
+                    }
+                    await ref
+                        .read(walletControllerProvider.notifier)
+                        .deposit(value);
+                    await ref.read(homeControllerProvider.notifier).refresh();
+                    _amountController.clear();
+                  },
+                  child: state.isProcessing
+                      ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : const Text('Deposit'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Holdings',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            ...summary.assets.map((asset) {
+              final value = formatCurrency(asset.value, summary.currency);
+              final qty = asset.quantity.toStringAsFixed(6);
+              final change = formatSignedPercent(asset.change24hPct);
+              final changePositive = asset.change24hPct >= 0;
+              return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    child: Text(
+                      asset.symbol.isNotEmpty ? asset.symbol[0] : '?',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  title: Text(asset.name),
+                  subtitle: Text('$qty ${asset.symbol}'),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        value,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        change,
+                        style: TextStyle(
+                          color: changePositive
+                              ? const Color(0xFF24C16B)
+                              : const Color(0xFFDA5B5B),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  Text(
-                    'Holdings',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  ...summary.assets.map((asset) {
-                    final value = formatCurrency(asset.value, summary.currency);
-                    final qty = asset.quantity.toStringAsFixed(6);
-                    final change = formatSignedPercent(asset.change24hPct);
-                    final changePositive = asset.change24hPct >= 0;
-                    return Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          child: Text(
-                            asset.symbol.isNotEmpty ? asset.symbol[0] : '?',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        title: Text(asset.name),
-                        subtitle: Text('$qty ${asset.symbol}'),
-                        trailing: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              value,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              change,
-                              style: TextStyle(
-                                color: changePositive
-                                    ? const Color(0xFF24C16B)
-                                    : const Color(0xFFDA5B5B),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Transactions',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 8),
-                  if (state.transactions.isEmpty)
-                    const Text('No transactions yet', style: TextStyle(color: Colors.grey))
-                  else
-                    ...state.transactions.map((tx) {
-                      final amountText = tx.totalValue.toStringAsFixed(2);
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: tx.type == 'DEPOSIT'
-                              ? Colors.blue.shade100
-                              : Colors.green.shade100,
-                          child: Icon(
-                            tx.type == 'DEPOSIT' ? Icons.add : Icons.shopping_bag,
-                            color: Colors.blueGrey,
-                          ),
-                        ),
-                        title: Text(
-                          tx.type == 'DEPOSIT'
-                              ? 'Deposit'
-                              : 'Buy ${tx.assetSymbol ?? tx.assetName ?? ''}',
-                        ),
-                        subtitle: Text(
-                          '${tx.createdAt.toLocal()}'.split('.').first,
-                        ),
-                        trailing: Text(
-                          '\$$amountText',
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      );
-                    }),
-                ],
-              ),
+                ),
+              );
+            }),
+            const SizedBox(height: 16),
+            Text(
+              'Transactions',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
+            const SizedBox(height: 8),
+            if (state.transactions.isEmpty)
+              const Text('No transactions yet', style: TextStyle(color: Colors.grey))
+            else
+              ...state.transactions.map((tx) {
+                final type = tx.type.toUpperCase();
+                final isDeposit = type == 'DEPOSIT';
+                final isSell = type == 'SELL';
+                final iconData = isDeposit
+                    ? Icons.add
+                    : isSell
+                    ? Icons.trending_down
+                    : Icons.shopping_bag;
+                final bgColor = isDeposit
+                    ? Colors.blue.shade100
+                    : isSell
+                    ? Colors.orange.shade100
+                    : Colors.green.shade100;
+                final label = isDeposit
+                    ? 'Deposit'
+                    : isSell
+                    ? 'Sell ${tx.assetSymbol ?? tx.assetName ?? ''}'
+                    : 'Buy ${tx.assetSymbol ?? tx.assetName ?? ''}';
+                final cashIn = isDeposit || isSell;
+                final amountText =
+                    '${cashIn ? '+' : '-'}${formatCurrency(tx.totalValue, summary.currency)}';
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: bgColor,
+                    child: Icon(
+                      iconData,
+                      color: Colors.blueGrey,
+                    ),
+                  ),
+                  title: Text(label),
+                  subtitle: Text(
+                    '${tx.createdAt.toLocal()}'.split('.').first,
+                  ),
+                  trailing: Text(
+                    amountText,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                );
+              }),
+          ],
+        ),
+      ),
     );
   }
 }
