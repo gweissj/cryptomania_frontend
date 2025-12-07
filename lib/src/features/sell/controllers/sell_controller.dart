@@ -77,7 +77,7 @@ class SellController extends StateNotifier<SellState> {
   Future<void> previewSell() async {
     final asset = state.selectedAsset;
     if (asset == null) {
-      state = state.copyWith(error: 'Выберите актив для продажи');
+      state = state.copyWith(error: 'Select an asset to sell');
       return;
     }
 
@@ -85,7 +85,7 @@ class SellController extends StateNotifier<SellState> {
     final amount = double.tryParse(state.amountInput.replaceAll(',', '.'));
 
     if ((quantity == null || quantity <= 0) && (amount == null || amount <= 0)) {
-      state = state.copyWith(error: 'Укажите количество или сумму продажи');
+      state = state.copyWith(error: 'Enter quantity or USD amount to sell');
       return;
     }
 
@@ -109,14 +109,14 @@ class SellController extends StateNotifier<SellState> {
   Future<void> executeSell() async {
     final asset = state.selectedAsset;
     if (asset == null) {
-      state = state.copyWith(error: 'Выберите актив для продажи');
+      state = state.copyWith(error: 'Select an asset to sell');
       return;
     }
 
     final quantity = double.tryParse(state.quantityInput.replaceAll(',', '.'));
     final amount = double.tryParse(state.amountInput.replaceAll(',', '.'));
     if ((quantity == null || quantity <= 0) && (amount == null || amount <= 0)) {
-      state = state.copyWith(error: 'Укажите количество или сумму продажи');
+      state = state.copyWith(error: 'Enter quantity or USD amount to sell');
       return;
     }
 
@@ -150,21 +150,22 @@ class SellController extends StateNotifier<SellState> {
     state = state.copyWith(commandMessage: null, commandError: null);
     final token = await _tokenStorage.readToken();
     if (token == null || token.isEmpty) {
-      state = state.copyWith(commandError: 'Нет токена для передачи на ПК');
+      state = state.copyWith(commandError: 'Token not found. Please log in first.');
       return;
     }
 
     await _dispatchCommand(
-      action: 'LOGIN',
+      action: 'LOGIN_ON_DESKTOP',
       payload: {'access_token': token},
       targetDeviceId: targetDeviceId,
+      ttlSeconds: 90,
     );
   }
 
   Future<void> dispatchSellCommand({String? targetDeviceId}) async {
     final asset = state.selectedAsset;
     if (asset == null) {
-      state = state.copyWith(commandError: 'Выберите актив перед отправкой команды');
+      state = state.copyWith(commandError: 'Select an asset before dispatching sell');
       return;
     }
 
@@ -172,12 +173,12 @@ class SellController extends StateNotifier<SellState> {
     final amount = double.tryParse(state.amountInput.replaceAll(',', '.'));
 
     if ((quantity == null || quantity <= 0) && (amount == null || amount <= 0)) {
-      state = state.copyWith(commandError: 'Заполните количество или сумму для продажи');
+      state = state.copyWith(commandError: 'Provide quantity or USD amount for sell');
       return;
     }
 
     await _dispatchCommand(
-      action: 'EXECUTE_SELL',
+      action: 'EXECUTE_DESKTOP_SELL',
       payload: {
         'asset_id': asset.id,
         if (quantity != null) 'quantity': quantity,
@@ -185,14 +186,16 @@ class SellController extends StateNotifier<SellState> {
         'source': state.priceSource,
       },
       targetDeviceId: targetDeviceId,
+      ttlSeconds: 120,
     );
   }
 
-  Future<void> dispatchOpenSellView({String? targetDeviceId}) async {
+  Future<void> dispatchOpenDesktopDashboard({String? targetDeviceId}) async {
     await _dispatchCommand(
-      action: 'OPEN_SELL_VIEW',
-      payload: {'tab': 'sell'},
+      action: 'OPEN_DESKTOP_DASHBOARD',
+      payload: {'view': 'sell'},
       targetDeviceId: targetDeviceId,
+      ttlSeconds: 120,
     );
   }
 
@@ -224,6 +227,7 @@ class SellController extends StateNotifier<SellState> {
     required String action,
     Map<String, dynamic>? payload,
     String? targetDeviceId,
+    int ttlSeconds = 60,
   }) async {
     state = state.copyWith(commandMessage: null, commandError: null, isSendingCommand: true);
     try {
@@ -231,10 +235,11 @@ class SellController extends StateNotifier<SellState> {
         action: action,
         payload: payload,
         targetDeviceId: targetDeviceId,
+        ttlSeconds: ttlSeconds,
       );
       state = state.copyWith(
         isSendingCommand: false,
-        commandMessage: 'Команда отправлена на ПК',
+        commandMessage: 'Command sent to server',
       );
     } catch (error) {
       state = state.copyWith(

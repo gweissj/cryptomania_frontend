@@ -18,6 +18,18 @@ class _SellPageState extends ConsumerState<SellPage> {
   final _quantityController = TextEditingController();
   final _amountController = TextEditingController();
   final _targetDeviceController = TextEditingController();
+  bool _isDesktopIdFieldVisible = false;
+
+  String? _currentTargetDeviceId() {
+    final trimmed = _targetDeviceController.text.trim();
+    return trimmed.isEmpty ? null : trimmed;
+  }
+
+  void _toggleDesktopIdField() {
+    setState(() {
+      _isDesktopIdFieldVisible = !_isDesktopIdFieldVisible;
+    });
+  }
 
   @override
   void dispose() {
@@ -121,10 +133,10 @@ class _SellPageState extends ConsumerState<SellPage> {
                           : () => ref.read(sellControllerProvider.notifier).previewSell(),
                       child: state.isPreviewLoading
                           ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                           : const Text('Предпросмотр'),
                     ),
                   ),
@@ -136,10 +148,10 @@ class _SellPageState extends ConsumerState<SellPage> {
                           : () => ref.read(sellControllerProvider.notifier).executeSell(),
                       child: state.isProcessing
                           ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                           : const Text('Продать'),
                     ),
                   ),
@@ -157,21 +169,22 @@ class _SellPageState extends ConsumerState<SellPage> {
               _SyncPanel(
                 controller: _targetDeviceController,
                 state: state,
+                showDeviceInput: _isDesktopIdFieldVisible,
+                onToggleDeviceInput: _toggleDesktopIdField,
                 onSendLogin: () => ref
                     .read(sellControllerProvider.notifier)
-                    .dispatchLoginCommand(targetDeviceId: _targetDeviceController.text),
-                onSendOpen: () => ref
+                    .dispatchLoginCommand(targetDeviceId: _currentTargetDeviceId()),
+                onOpenDashboard: () => ref
                     .read(sellControllerProvider.notifier)
-                    .dispatchOpenSellView(targetDeviceId: _targetDeviceController.text),
+                    .dispatchOpenDesktopDashboard(
+                    targetDeviceId: _currentTargetDeviceId()),
                 onSendSell: () => ref
                     .read(sellControllerProvider.notifier)
-                    .dispatchSellCommand(targetDeviceId: _targetDeviceController.text),
+                    .dispatchSellCommand(targetDeviceId: _currentTargetDeviceId()),
                 onPoll: () => ref.read(sellControllerProvider.notifier).pollCommands(
-                      targetDevice: 'desktop',
-                      targetDeviceId: _targetDeviceController.text.isEmpty
-                          ? null
-                          : _targetDeviceController.text,
-                    ),
+                  targetDevice: 'desktop',
+                  targetDeviceId: _currentTargetDeviceId(),
+                ),
                 onAck: (id, status) =>
                     ref.read(sellControllerProvider.notifier).acknowledgeCommand(id, status),
               ),
@@ -203,8 +216,8 @@ class _SellOverviewCard extends StatelessWidget {
             Text(
               'Продажа',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 6),
             Text('Свободные средства: ${formatCurrency(cash, currency)}'),
@@ -240,42 +253,42 @@ class _HoldingsList extends StatelessWidget {
       children: holdings
           .map(
             (asset) => Card(
-              elevation: selected?.id == asset.id ? 2 : 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-                side: BorderSide(
-                  color: selected?.id == asset.id
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
-                  width: 1.2,
-                ),
-              ),
-              child: ListTile(
-                onTap: () => onTap(asset),
-                title: Text(asset.name),
-                subtitle: Text(
-                  '${asset.symbol} • ${formatCurrency(asset.currentPrice, 'USD')}',
-                ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('${asset.quantity.toStringAsFixed(6)} шт'),
-                    Text(
-                      formatCurrency(asset.currentValue, 'USD'),
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    Text(
-                      '${asset.unrealizedPnlPct.toStringAsFixed(2)}%',
-                      style: TextStyle(
-                        color: asset.unrealizedPnl >= 0 ? Colors.green : Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+          elevation: selected?.id == asset.id ? 2 : 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(
+              color: selected?.id == asset.id
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.transparent,
+              width: 1.2,
             ),
-          )
+          ),
+          child: ListTile(
+            onTap: () => onTap(asset),
+            title: Text(asset.name),
+            subtitle: Text(
+              '${asset.symbol} • ${formatCurrency(asset.currentPrice, 'USD')}',
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('${asset.quantity.toStringAsFixed(6)} шт'),
+                Text(
+                  formatCurrency(asset.currentValue, 'USD'),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  '${asset.unrealizedPnlPct.toStringAsFixed(2)}%',
+                  style: TextStyle(
+                    color: asset.unrealizedPnl >= 0 ? Colors.green : Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      )
           .toList(),
     );
   }
@@ -368,7 +381,7 @@ class _InputRow extends StatelessWidget {
           child: TextField(
             controller: quantityController,
             keyboardType:
-                const TextInputType.numberWithOptions(decimal: true, signed: false),
+            const TextInputType.numberWithOptions(decimal: true, signed: false),
             decoration: InputDecoration(
               labelText: 'Количество',
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
@@ -381,7 +394,7 @@ class _InputRow extends StatelessWidget {
           child: TextField(
             controller: amountController,
             keyboardType:
-                const TextInputType.numberWithOptions(decimal: true, signed: false),
+            const TextInputType.numberWithOptions(decimal: true, signed: false),
             decoration: InputDecoration(
               labelText: 'Сумма USD',
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
@@ -412,8 +425,8 @@ class _PreviewCard extends StatelessWidget {
             Text(
               'Предпросмотр',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 8),
             Text('Источник цены: ${preview.priceSource.toUpperCase()}'),
@@ -466,8 +479,10 @@ class _SyncPanel extends StatelessWidget {
   const _SyncPanel({
     required this.controller,
     required this.state,
+    required this.showDeviceInput,
+    required this.onToggleDeviceInput,
     required this.onSendLogin,
-    required this.onSendOpen,
+    required this.onOpenDashboard,
     required this.onSendSell,
     required this.onPoll,
     required this.onAck,
@@ -475,8 +490,10 @@ class _SyncPanel extends StatelessWidget {
 
   final TextEditingController controller;
   final SellState state;
+  final bool showDeviceInput;
+  final VoidCallback onToggleDeviceInput;
   final VoidCallback onSendLogin;
-  final VoidCallback onSendOpen;
+  final VoidCallback onOpenDashboard;
   final VoidCallback onSendSell;
   final VoidCallback onPoll;
   final void Function(int id, String status) onAck;
@@ -490,42 +507,60 @@ class _SyncPanel extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Синхронизация с ПК',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            Row(
+              children: [
+                Text(
+                  'Desktop sync',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: onToggleDeviceInput,
+                  icon: Icon(showDeviceInput ? Icons.visibility_off : Icons.computer),
+                  label: Text(showDeviceInput ? 'Скрыть Desktop ID' : 'Указать Desktop ID'),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: 'ID ПК (опционально)',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            if (showDeviceInput) ...[
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: 'Desktop ID (leave empty for any PC)',
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
+            ] else ...[
+              Text(
+                'Поле можно скрыть: команды уйдут на любой включенный ПК. Укажите ID, если нужно выбрать конкретный.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+            ],
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
                 ElevatedButton.icon(
                   icon: const Icon(Icons.login),
-                  label: const Text('Отправить LOGIN'),
+                  label: const Text('Send LOGIN_ON_DESKTOP'),
                   onPressed: state.isSendingCommand ? null : onSendLogin,
                 ),
                 FilledButton.icon(
                   icon: const Icon(Icons.open_in_new),
-                  label: const Text('Открыть вкладку продаж'),
-                  onPressed: state.isSendingCommand ? null : onSendOpen,
+                  label: const Text('Open desktop dashboard'),
+                  onPressed: state.isSendingCommand ? null : onOpenDashboard,
                 ),
                 OutlinedButton.icon(
                   icon: const Icon(Icons.shopping_cart_checkout),
-                  label: const Text('Команда EXECUTE_SELL'),
+                  label: const Text('Send EXECUTE_DESKTOP_SELL'),
                   onPressed: state.isSendingCommand ? null : onSendSell,
                 ),
                 IconButton.outlined(
-                  tooltip: 'Получить команды для ПК',
+                  tooltip: 'Poll commands for desktop',
                   icon: const Icon(Icons.sync),
                   onPressed: state.isSendingCommand ? null : onPoll,
                 ),
@@ -534,11 +569,11 @@ class _SyncPanel extends StatelessWidget {
             if (state.pendingCommands.isNotEmpty) ...[
               const SizedBox(height: 10),
               Text(
-                'Ожидающие команды (debug для ПК клиента):',
+                'Pending commands (debug view):',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               ...state.pendingCommands.map(
-                (cmd) => ListTile(
+                    (cmd) => ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
                   title: Text('${cmd.id}: ${cmd.action} (${cmd.status})'),
