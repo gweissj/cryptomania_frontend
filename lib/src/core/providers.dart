@@ -6,7 +6,6 @@ import '../data/repositories/device_command_repository_impl.dart';
 import '../data/repositories/market_movers_repository_impl.dart';
 import '../data/repositories/sell_repository_impl.dart';
 import '../data/repositories/wallet_repository_impl.dart';
-import '../data/services/coin_gecko_api.dart';
 import '../data/services/kursach_api.dart';
 import '../domain/repositories/auth_repository.dart';
 import '../domain/repositories/dashboard_repository.dart';
@@ -18,10 +17,6 @@ import 'network/dio_providers.dart';
 
 final kursachApiProvider = Provider<KursachApi>(
   (ref) => KursachApi(ref.watch(backendDioProvider)),
-);
-
-final coinGeckoApiProvider = Provider<CoinGeckoApi>(
-  (ref) => CoinGeckoApi(ref.watch(coinGeckoDioProvider)),
 );
 
 final marketMoversRepositoryProvider = Provider<MarketMoversRepository>(

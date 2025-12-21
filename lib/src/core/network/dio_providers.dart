@@ -55,43 +55,7 @@ final backendDioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
-final coinGeckoDioProvider = Provider<Dio>((ref) {
-  final dio = Dio(
-    BaseOptions(
-      baseUrl: AppConfig.coinGeckoBaseUrl,
-      connectTimeout: const Duration(seconds: 20),
-      receiveTimeout: const Duration(seconds: 20),
-      headers: {
-        'Accept': 'application/json',
-      },
-    ),
-  );
-
-  dio.interceptors.add(
-    InterceptorsWrapper(
-      onRequest: (options, handler) {
-        final key = AppConfig.coinGeckoApiKey;
-        if (key.isNotEmpty) {
-          options.headers['x-cg-pro-api-key'] = key;
-        }
-        handler.next(options);
-      },
-    ),
-  );
-
-  dio.interceptors.add(
-    LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      logPrint: (obj) => _dioLogger(obj),
-    ),
-  );
-
-  return dio;
-});
-
 void _dioLogger(Object object) {
   // ignore: avoid_print
   print(object);
 }
-
