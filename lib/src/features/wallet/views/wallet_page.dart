@@ -42,7 +42,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
     final summary = state.summary;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Wallet'),
+        title: const Text('Кошелек'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -51,7 +51,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
         ],
       ),
       body: summary == null
-          ? const Center(child: Text('No wallet data yet'))
+          ? const Center(child: Text('Данных о кошельке пока нет'))
           : RefreshIndicator(
         onRefresh: () => ref.read(walletControllerProvider.notifier).refresh(),
         child: ListView(
@@ -60,7 +60,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
             _SummaryCard(summary: summary),
             const SizedBox(height: 16),
             Text(
-              'Deposit USD',
+              'Депозит в USD',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -77,7 +77,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                       signed: false,
                     ),
                     decoration: InputDecoration(
-                      hintText: 'Amount',
+                      hintText: 'Сумма',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -118,7 +118,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Holdings',
+              'Активы',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -166,7 +166,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
             }),
             const SizedBox(height: 16),
             Text(
-              'Transactions',
+              'Транзакции',
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -174,7 +174,7 @@ class _WalletPageState extends ConsumerState<WalletPage> {
             ),
             const SizedBox(height: 8),
             if (state.transactions.isEmpty)
-              const Text('No transactions yet', style: TextStyle(color: Colors.grey))
+              const Text('Транзакций пока нет', style: TextStyle(color: Colors.grey))
             else
               ...state.transactions.map((tx) {
                 final type = tx.type.toUpperCase();
@@ -256,7 +256,7 @@ class _SummaryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Portfolio Balance',
+                'Баланс портфеля',
                 style: TextStyle(color: Colors.grey),
               ),
               Container(
@@ -291,7 +291,7 @@ class _SummaryCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Holdings', style: TextStyle(color: Colors.grey)),
+                  const Text('Активы', style: TextStyle(color: Colors.grey)),
                   Text(
                     holdings,
                     style: const TextStyle(fontWeight: FontWeight.w600),
@@ -301,7 +301,7 @@ class _SummaryCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text('Cash', style: TextStyle(color: Colors.grey)),
+                  const Text('Наличные', style: TextStyle(color: Colors.grey)),
                   Text(
                     cash,
                     style: const TextStyle(fontWeight: FontWeight.w600),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/dashboard_models.dart';
@@ -57,7 +58,7 @@ class _TradePageState extends ConsumerState<TradePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Trade'),
+        title: const Text('Торги'),
         actions: [
           IconButton(
             onPressed: () => ref.read(tradeControllerProvider.notifier).loadAssets(
@@ -78,7 +79,7 @@ class _TradePageState extends ConsumerState<TradePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Available',
+                  'Доступно',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -95,7 +96,7 @@ class _TradePageState extends ConsumerState<TradePage> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search assets',
+                hintText: 'Поиск..',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -105,6 +106,16 @@ class _TradePageState extends ConsumerState<TradePage> {
                   .read(tradeControllerProvider.notifier)
                   .loadAssets(query: value),
             ),
+            if (tradeState.lastUpdated != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Обновлено в ${DateFormat('HH:mm').format(tradeState.lastUpdated!)}',
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium
+                    ?.copyWith(color: Colors.grey[600]),
+              ),
+            ],
             const SizedBox(height: 12),
             if (tradeState.isLoading)
               const Center(child: CircularProgressIndicator())
@@ -145,7 +156,7 @@ class _TradePageState extends ConsumerState<TradePage> {
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true, signed: false),
               decoration: InputDecoration(
-                labelText: 'Amount in USD',
+                labelText: 'Сумма в USD',
                 prefixIcon: const Icon(Icons.attach_money),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
@@ -168,14 +179,14 @@ class _TradePageState extends ConsumerState<TradePage> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Buy now'),
+                        : const Text('Купить'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 FilledButton.tonal(
                   onPressed: () =>
                       ref.read(mainTabProvider.notifier).state = MainTab.wallet,
-                  child: const Text('Add funds'),
+                  child: const Text('Пополнить счет'),
                 ),
               ],
             ),
@@ -368,7 +379,7 @@ class _PriceOptions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Цена из двух источников — выбери выгоднее',
+          'Цена из двух источников — выберите выгодную',
           style: Theme.of(context)
               .textTheme
               .titleMedium
@@ -402,7 +413,7 @@ class _PriceOptions extends StatelessWidget {
               ),
               subtitle: isCheapest
                   ? const Text('Дешевле сейчас')
-                  : const Text('Выше цена, но доступно к покупке'),
+                  : const Text('Цена выше'),
               trailing: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.center,
