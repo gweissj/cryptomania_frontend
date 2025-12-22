@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/dashboard_models.dart';
@@ -31,10 +32,28 @@ class _MarketMoversPageState extends ConsumerState<MarketMoversPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Market Movers'),
+        title: const Text('Маркет - цены валют'),
+        actions: [
+          if (state.isLoading)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Refresh market',
+              onPressed: () =>
+                  controller.loadTop(widget.currency, forceRefresh: true),
+            ),
+        ],
       ),
       body: RefreshIndicator(
-        onRefresh: () => controller.loadTop(widget.currency),
+        onRefresh: () => controller.loadTop(widget.currency, forceRefresh: true),
         child: Builder(
           builder: (context) {
             if (state.isLoading) {
@@ -58,14 +77,24 @@ class _MarketMoversPageState extends ConsumerState<MarketMoversPage> {
                 ],
               );
             }
-            return ListView.separated(
+            return ListView(
               padding: const EdgeInsets.all(16),
-              itemBuilder: (context, index) {
-                final mover = state.items[index];
-                return MoverRow(mover: mover, currency: widget.currency);
-              },
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemCount: state.items.length,
+              children: [
+                if (state.lastUpdated != null) ...[
+                  Text(
+                    'Время обновления данных ${DateFormat('HH:mm').format(state.lastUpdated!)}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                for (var i = 0; i < state.items.length; i++) ...[
+                  MoverRow(mover: state.items[i], currency: widget.currency),
+                  if (i != state.items.length - 1) const SizedBox(height: 12),
+                ],
+              ],
             );
           },
         ),
