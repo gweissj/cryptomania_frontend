@@ -62,7 +62,7 @@ class _SellPageState extends ConsumerState<SellPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Продажа и синхронизация'),
+        title: const Text('Продажа валюты'),
         actions: [
           IconButton(
             onPressed: () => ref.read(sellControllerProvider.notifier).loadOverview(),

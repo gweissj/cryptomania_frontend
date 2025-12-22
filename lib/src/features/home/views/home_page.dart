@@ -117,7 +117,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                   BalanceSection(data: homeState.dashboard!),
                   const SizedBox(height: 24),
                   SectionHeader(
-                    title: 'Market Movers',
+                    title: 'Маркет - цены валют',
                     actionLabel: 'More',
                     onAction: () => context.push(
                       '${AppRoute.marketMovers}/${homeState.dashboard!.currency}',
@@ -442,7 +442,7 @@ class PortfolioSection extends StatelessWidget {
         const SizedBox(height: 16),
         if (assets.isEmpty)
           const Text(
-            'You have not purchased any crypto yet',
+            'Вы еще не приобрели ни одной криптовалюты',
             style: TextStyle(color: Colors.grey),
           )
         else

@@ -34,11 +34,11 @@ class MainNavigationPage extends ConsumerWidget {
         onTap: (value) => ref.read(mainTabProvider.notifier).state = MainTab.values[value],
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.swap_calls), label: 'Trade'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Market'),
-          BottomNavigationBarItem(icon: Icon(Icons.sell_outlined), label: 'Sell'),
-          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Wallet'),
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Главная'),
+          BottomNavigationBarItem(icon: Icon(Icons.swap_calls), label: 'Торги'),
+          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Маркет'),
+          BottomNavigationBarItem(icon: Icon(Icons.sell_outlined), label: 'Продажа'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_outlined), label: 'Кошелек'),
         ],
       ),
     );
