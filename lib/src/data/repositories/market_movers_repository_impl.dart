@@ -1,5 +1,6 @@
 import '../../domain/entities/dashboard_models.dart';
 import '../../domain/repositories/market_movers_repository.dart';
+import '../../domain/utils/market_mover_filters.dart';
 import '../mappers/price_quote_mapper.dart';
 import '../services/kursach_api.dart';
 
@@ -14,7 +15,7 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
     required int limit,
   }) async {
     final response = await _api.fetchMarketMovers(limit: limit);
-    return response
+    final movers = response
         .map(
           (e) => MarketMover(
             id: e.id,
@@ -29,6 +30,7 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
           ),
         )
         .toList();
+    return filterStandardMarketMovers(movers);
   }
 
   @override

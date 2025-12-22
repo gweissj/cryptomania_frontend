@@ -1,4 +1,5 @@
 import '../../domain/entities/dashboard_models.dart';
+import '../../domain/utils/market_mover_filters.dart';
 import '../models/dashboard_dto.dart';
 
 extension DashboardDtoMapper on CryptoDashboardDto {
@@ -10,21 +11,23 @@ extension DashboardDtoMapper on CryptoDashboardDto {
       cashBalance: cashBalance,
       balanceChangePct: balanceChangePct,
       chart: chart.map((e) => ChartPoint(timestamp: DateTime.fromMillisecondsSinceEpoch(e.timestamp), price: e.price)).toList(),
-      marketMovers: marketMovers
-          .map(
-            (e) => MarketMover(
-              id: e.id,
-              name: e.name,
-              symbol: e.symbol,
-              pair: e.pair,
-              currentPrice: e.currentPrice,
-              change24hPct: e.change24hPct,
-              volume24h: e.volume24h,
-              imageUrl: e.imageUrl,
-              sparkline: e.sparkline,
-            ),
-          )
-          .toList(),
+      marketMovers: filterStandardMarketMovers(
+        marketMovers
+            .map(
+              (e) => MarketMover(
+                id: e.id,
+                name: e.name,
+                symbol: e.symbol,
+                pair: e.pair,
+                currentPrice: e.currentPrice,
+                change24hPct: e.change24hPct,
+                volume24h: e.volume24h,
+                imageUrl: e.imageUrl,
+                sparkline: e.sparkline,
+              ),
+            )
+            .toList(),
+      ),
       portfolio: portfolio
           .map(
             (e) => PortfolioAsset(
