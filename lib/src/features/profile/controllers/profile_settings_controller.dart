@@ -15,7 +15,7 @@ final profileSettingsControllerProvider =
       ProfileSettingsState
     >((ref) {
       final repository = ref.watch(authRepositoryProvider);
-      final session = ref.watch(sessionControllerProvider);
+      final session = ref.read(sessionControllerProvider);
       return ProfileSettingsController(repository, ref, session.user);
     });
 
@@ -63,11 +63,8 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   }
 
   Future<void> submit() async {
-    final firstNameError = ValidationUtils.validateRequired(
-      state.firstName,
-      'Имя',
-    );
-    final lastNameError = ValidationUtils.validateRequired(
+    final firstNameError = ValidationUtils.validateName(state.firstName, 'Имя');
+    final lastNameError = ValidationUtils.validateName(
       state.lastName,
       'Фамилия',
     );
@@ -133,6 +130,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
       final profile = await _repository.updateProfile(data);
       if (!mounted) return;
       _ref.read(sessionControllerProvider.notifier).setAuthenticated(profile);
+      if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
         successProfile: profile,

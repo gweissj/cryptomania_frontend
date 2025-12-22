@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AuthTextField extends StatefulWidget {
   const AuthTextField({
@@ -16,6 +17,7 @@ class AuthTextField extends StatefulWidget {
     this.onSubmitted,
     this.suffix,
     this.onTap,
+    this.inputFormatters,
   });
 
   final String value;
@@ -31,6 +33,7 @@ class AuthTextField extends StatefulWidget {
   final ValueChanged<String>? onSubmitted;
   final Widget? suffix;
   final VoidCallback? onTap;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<AuthTextField> createState() => _AuthTextFieldState();
@@ -80,7 +83,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
       textInputAction: widget.textInputAction,
       onSubmitted: widget.onSubmitted,
       onTap: widget.onTap,
+      inputFormatters: widget.inputFormatters,
     );
   }
 }
-

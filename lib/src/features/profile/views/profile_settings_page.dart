@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,28 +21,30 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final nameInputFormatters = <TextInputFormatter>[
+      FilteringTextInputFormatter.allow(RegExp('[A-Za-zА-Яа-яЁё]')),
+    ];
+
     ref.listen<ProfileSettingsState>(profileSettingsControllerProvider, (
       previous,
       next,
     ) {
-      if (next.successProfile != null &&
-          next.successProfile != previous?.successProfile) {
-        final messenger = ScaffoldMessenger.of(context);
-        messenger
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(
-              content: Text('Данные успешно обновлены'),
-              behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.all(16),
-            ),
-          );
-        ref
-            .read(profileSettingsControllerProvider.notifier)
-            .acknowledgeSuccess();
-        if (!mounted) return;
-        context.go(AppRoute.home);
+      final updated = next.successProfile;
+      if (updated == null || updated == previous?.successProfile) {
+        return;
       }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Данные успешно обновлены'),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
+          ),
+        );
+      ref.read(profileSettingsControllerProvider.notifier).acknowledgeSuccess();
+      context.go(AppRoute.home);
     });
 
     final state = ref.watch(profileSettingsControllerProvider);
@@ -88,6 +91,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         onChanged: controller.onFirstNameChanged,
                         label: 'Имя',
                         placeholder: 'Введите имя',
+                        inputFormatters: nameInputFormatters,
                         textInputAction: TextInputAction.next,
                         errorText: state.firstNameError,
                       ),
@@ -97,6 +101,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         onChanged: controller.onLastNameChanged,
                         label: 'Фамилия',
                         placeholder: 'Введите фамилию',
+                        inputFormatters: nameInputFormatters,
                         textInputAction: TextInputAction.next,
                         errorText: state.lastNameError,
                       ),

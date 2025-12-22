@@ -24,6 +24,17 @@ class ValidationUtils {
     return null;
   }
 
+  static String? validateName(String value, String fieldName) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return '$fieldName обязательно';
+    }
+    if (!_nameRegExp.hasMatch(trimmed)) {
+      return '$fieldName может содержать только буквы русского или английского алфавита';
+    }
+    return null;
+  }
+
   static String? validateRequired(String value, String fieldName) {
     if (value.trim().isEmpty) {
       return '$fieldName обязательно';
@@ -58,6 +69,7 @@ class ValidationUtils {
   }
 
   static const int _minPasswordLength = 8;
+  static final _nameRegExp = RegExp(r'^[A-Za-zА-Яа-яЁё]+$');
   static const _textEnterEmail = 'Введите e-mail';
   static const _textEmailNeedsAt = 'E-mail должен содержать символ @';
   static const _textEmailNeedsDot = 'E-mail должен содержать точку';
