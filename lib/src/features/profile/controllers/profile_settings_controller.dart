@@ -10,18 +10,18 @@ import '../../session/controllers/session_controller.dart';
 import '../../../utils/error_handler.dart';
 
 final profileSettingsControllerProvider =
-StateNotifierProvider.autoDispose<
-    ProfileSettingsController,
-    ProfileSettingsState
->((ref) {
-  final repository = ref.watch(authRepositoryProvider);
-  final session = ref.watch(sessionControllerProvider);
-  return ProfileSettingsController(repository, ref, session.user);
-});
+    StateNotifierProvider.autoDispose<
+      ProfileSettingsController,
+      ProfileSettingsState
+    >((ref) {
+      final repository = ref.watch(authRepositoryProvider);
+      final session = ref.watch(sessionControllerProvider);
+      return ProfileSettingsController(repository, ref, session.user);
+    });
 
 class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   ProfileSettingsController(this._repository, this._ref, UserProfile? user)
-      : super(ProfileSettingsState.fromUser(user));
+    : super(ProfileSettingsState.fromUser(user));
 
   final AuthRepository _repository;
   final Ref _ref;
@@ -65,11 +65,11 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
   Future<void> submit() async {
     final firstNameError = ValidationUtils.validateRequired(
       state.firstName,
-      '���',
+      'Имя',
     );
     final lastNameError = ValidationUtils.validateRequired(
       state.lastName,
-      '�������',
+      'Фамилия',
     );
     final emailError = ValidationUtils.validateEmail(state.email);
 
@@ -121,7 +121,7 @@ class ProfileSettingsController extends StateNotifier<ProfileSettingsState> {
 
     if (!data.hasUpdates) {
       state = state.copyWith(
-        generalError: '��� ��������� ��� ����������',
+        generalError: 'Нет изменений для сохранения',
         passwordError: null,
         repeatPasswordError: null,
       );
@@ -216,17 +216,17 @@ class ProfileSettingsState {
 
   bool get hasChanges =>
       firstName.trim() != initialFirstName ||
-          lastName.trim() != initialLastName ||
-          email.trim() != initialEmail ||
-          newPassword.isNotEmpty ||
-          repeatPassword.isNotEmpty;
+      lastName.trim() != initialLastName ||
+      email.trim() != initialEmail ||
+      newPassword.isNotEmpty ||
+      repeatPassword.isNotEmpty;
 
   bool get canSubmit =>
       !isLoading &&
-          firstName.trim().isNotEmpty &&
-          lastName.trim().isNotEmpty &&
-          email.trim().isNotEmpty &&
-          hasChanges;
+      firstName.trim().isNotEmpty &&
+      lastName.trim().isNotEmpty &&
+      email.trim().isNotEmpty &&
+      hasChanges;
 
   String get formattedBirthDate {
     if (birthDate == null) return '—';

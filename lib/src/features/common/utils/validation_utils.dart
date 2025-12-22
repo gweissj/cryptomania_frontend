@@ -43,7 +43,7 @@ class ValidationUtils {
 
   static String? validateAdult(DateTime? birthDate, {int minAge = 18}) {
     if (birthDate == null) {
-      return '������� ���� ��������';
+      return 'Укажите дату рождения';
     }
     final now = DateTime.now();
     final years = now.year - birthDate.year;
@@ -52,7 +52,7 @@ class ValidationUtils {
         (now.month == birthDate.month && now.day >= birthDate.day);
     final age = hasHadBirthday ? years : years - 1;
     if (age < minAge) {
-      return '��⮬�� �� ������� 18 ���';
+      return 'Вам должно быть больше 18 лет';
     }
     return null;
   }
