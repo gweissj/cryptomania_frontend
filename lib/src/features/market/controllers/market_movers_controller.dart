@@ -37,6 +37,7 @@ class MarketMoversController extends StateNotifier<MarketMoversState> {
       final items = await _repository.fetchTopByMarketCap(
         vsCurrency: vsCurrency,
         limit: 15,
+        priceSource: 'coingecko',
       );
       state = state.copyWith(
         isLoading: false,

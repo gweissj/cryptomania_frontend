@@ -76,10 +76,16 @@ class KursachApi {
     return CryptoDashboardDto.fromJson(response.data ?? const {});
   }
 
-  Future<List<MarketMoverDto>> fetchMarketMovers({int limit = 15}) async {
+  Future<List<MarketMoverDto>> fetchMarketMovers({
+    int limit = 15,
+    String? source,
+  }) async {
     final response = await _dio.get<List<dynamic>>(
       '/crypto/market-movers',
-      queryParameters: {'limit': limit},
+      queryParameters: {
+        'limit': limit,
+        if (source != null) 'source': source,
+      },
     );
     final data = response.data ?? [];
     return data

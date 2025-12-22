@@ -13,8 +13,12 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
   Future<List<MarketMover>> fetchTopByMarketCap({
     required String vsCurrency,
     required int limit,
+    String? priceSource,
   }) async {
-    final response = await _api.fetchMarketMovers(limit: limit);
+    final response = await _api.fetchMarketMovers(
+      limit: limit,
+      source: priceSource,
+    );
     final movers = response
         .map(
           (e) => MarketMover(
