@@ -48,6 +48,10 @@ class _TradePageState extends ConsumerState<TradePage> {
     final tradeState = ref.watch(tradeControllerProvider);
     final walletState = ref.watch(walletControllerProvider);
     final availableCash = walletState.summary?.cashBalance ?? 0.0;
+    final selectedQuote = _quoteForSelectedSource(
+      tradeState.quotes,
+      tradeState.selectedSource,
+    );
 
     if (_amountController.text != tradeState.amountInput) {
       _amountController.text = tradeState.amountInput;
@@ -139,7 +143,10 @@ class _TradePageState extends ConsumerState<TradePage> {
               ),
             const SizedBox(height: 16),
             if (tradeState.selectedAsset != null)
-              _SelectedAssetCard(asset: tradeState.selectedAsset!),
+              _SelectedAssetCard(
+                asset: tradeState.selectedAsset!,
+                quote: selectedQuote,
+              ),
             if (tradeState.selectedAsset != null) ...[
               const SizedBox(height: 12),
               _PriceOptions(
@@ -195,6 +202,18 @@ class _TradePageState extends ConsumerState<TradePage> {
         ),
       ),
     );
+  }
+
+  PriceQuote? _quoteForSelectedSource(
+    List<PriceQuote> quotes,
+    String selectedSource,
+  ) {
+    for (final quote in quotes) {
+      if (quote.source.toLowerCase() == selectedSource.toLowerCase()) {
+        return quote;
+      }
+    }
+    return null;
   }
 }
 
@@ -255,15 +274,20 @@ class _AssetTile extends StatelessWidget {
 }
 
 class _SelectedAssetCard extends StatelessWidget {
-  const _SelectedAssetCard({required this.asset});
+  const _SelectedAssetCard({required this.asset, this.quote});
 
   final MarketMover asset;
+  final PriceQuote? quote;
 
   @override
   Widget build(BuildContext context) {
-    final price = formatCurrency(asset.currentPrice, 'USD');
+    final priceValue = quote?.price ?? asset.currentPrice;
+    final price = formatCurrency(priceValue, 'USD');
     final change = formatSignedPercent(asset.change24hPct);
     final changePositive = asset.change24hPct >= 0;
+    final priceLabel = quote != null
+        ? 'Цена сделки (${quote!.source.toUpperCase()})'
+        : 'Текущая цена';
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -337,6 +361,12 @@ class _SelectedAssetCard extends StatelessWidget {
                 .headlineSmall
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
+          Text(
+            priceLabel,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[600],
+                ),
+          ),
           const SizedBox(height: 6),
           Text(
             '24h volume: ${formatVolume(asset.volume24h)}',
@@ -379,7 +409,7 @@ class _PriceOptions extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Цена из двух источников — выберите выгодную',
+          'Цена из источников — выберите вариант',
           style: Theme.of(context)
               .textTheme
               .titleMedium

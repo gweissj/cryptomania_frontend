@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/wallet.dart';
@@ -240,6 +241,9 @@ class _SummaryCard extends StatelessWidget {
     final holdings = formatCurrency(summary.holdingsBalance, summary.currency);
     final change = formatSignedPercent(summary.balanceChangePct);
     final changePositive = summary.balanceChangePct >= 0;
+    final updatedAt = summary.lastUpdated.toLocal();
+    final updatedTime = DateFormat('HH:mm:ss').format(updatedAt);
+    final updatedAgo = _formatAge(updatedAt);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -281,6 +285,14 @@ class _SummaryCard extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 4),
+          Text(
+            'Обновлено в $updatedTime ($updatedAgo)',
+            style: Theme.of(context)
+                .textTheme
+                .labelMedium
+                ?.copyWith(color: Colors.grey[600]),
+          ),
           const SizedBox(height: 8),
           Text(
             balance,
@@ -318,5 +330,16 @@ class _SummaryCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatAge(DateTime timestamp) {
+    final diff = DateTime.now().difference(timestamp);
+    if (diff.inSeconds < 60) {
+      return '${diff.inSeconds} с назад';
+    }
+    if (diff.inMinutes < 60) {
+      return '${diff.inMinutes} мин назад';
+    }
+    return '${diff.inHours} ч назад';
   }
 }

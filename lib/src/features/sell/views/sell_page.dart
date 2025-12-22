@@ -159,7 +159,7 @@ class _SellOverviewCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text('Текущая стоимость активов: ${formatCurrency(total, currency)}'),
             const SizedBox(height: 4),
-            Text('Всего инструментов: ${state.holdings.length}'),
+            Text('Всего активов: ${state.holdings.length}'),
           ],
         ),
       ),
