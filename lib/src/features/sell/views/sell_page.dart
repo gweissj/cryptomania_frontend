@@ -15,26 +15,6 @@ class SellPage extends ConsumerStatefulWidget {
 }
 
 class _SellPageState extends ConsumerState<SellPage> {
-  final _targetDeviceController = TextEditingController();
-  bool _isDesktopIdFieldVisible = false;
-
-  String? _currentTargetDeviceId() {
-    final trimmed = _targetDeviceController.text.trim();
-    return trimmed.isEmpty ? null : trimmed;
-  }
-
-  void _toggleDesktopIdField() {
-    setState(() {
-      _isDesktopIdFieldVisible = !_isDesktopIdFieldVisible;
-    });
-  }
-
-  @override
-  void dispose() {
-    _targetDeviceController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.listen<SellState>(sellControllerProvider, (previous, next) {
@@ -115,33 +95,30 @@ class _SellPageState extends ConsumerState<SellPage> {
                     : () => ref
                     .read(sellControllerProvider.notifier)
                     .requestDesktopSellSession(
-                  targetDeviceId: _currentTargetDeviceId(),
+                  targetDeviceId: null,
                 ),
               ),
               const SizedBox(height: 16),
               _SyncPanel(
-                controller: _targetDeviceController,
                 state: state,
-                showDeviceInput: _isDesktopIdFieldVisible,
-                onToggleDeviceInput: _toggleDesktopIdField,
                 onSendLogin: () => ref
                     .read(sellControllerProvider.notifier)
-                    .dispatchLoginCommand(targetDeviceId: _currentTargetDeviceId()),
+                    .dispatchLoginCommand(targetDeviceId: null),
                 onOpenDashboard: () => ref
                     .read(sellControllerProvider.notifier)
                     .dispatchOpenDesktopDashboard(
-                    targetDeviceId: _currentTargetDeviceId()),
+                    targetDeviceId: null),
                 onRequestDesktopSell: () => ref
                     .read(sellControllerProvider.notifier)
                     .requestDesktopSellSession(
-                  targetDeviceId: _currentTargetDeviceId(),
+                  targetDeviceId: null,
                 ),
                 onSendSell: () => ref
                     .read(sellControllerProvider.notifier)
-                    .dispatchSellCommand(targetDeviceId: _currentTargetDeviceId()),
+                    .dispatchSellCommand(targetDeviceId: null),
                 onPoll: () => ref.read(sellControllerProvider.notifier).pollCommands(
                   targetDevice: 'desktop',
-                  targetDeviceId: _currentTargetDeviceId(),
+                  targetDeviceId: null,
                 ),
                 onAck: (id, status) =>
                     ref.read(sellControllerProvider.notifier).acknowledgeCommand(id, status),
@@ -320,10 +297,7 @@ class _PriceSourcePicker extends StatelessWidget {
 
 class _SyncPanel extends StatelessWidget {
   const _SyncPanel({
-    required this.controller,
     required this.state,
-    required this.showDeviceInput,
-    required this.onToggleDeviceInput,
     required this.onSendLogin,
     required this.onOpenDashboard,
     required this.onRequestDesktopSell,
@@ -332,10 +306,7 @@ class _SyncPanel extends StatelessWidget {
     required this.onAck,
   });
 
-  final TextEditingController controller;
   final SellState state;
-  final bool showDeviceInput;
-  final VoidCallback onToggleDeviceInput;
   final VoidCallback onSendLogin;
   final VoidCallback onOpenDashboard;
   final VoidCallback onRequestDesktopSell;
@@ -355,62 +326,45 @@ class _SyncPanel extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Desktop sync',
+                  'Синхронизация ПК',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const Spacer(),
-                TextButton.icon(
-                  onPressed: onToggleDeviceInput,
-                  icon: Icon(showDeviceInput ? Icons.visibility_off : Icons.computer),
-                  label: Text(showDeviceInput ? 'Скрыть Desktop ID' : 'Указать Desktop ID'),
-                ),
               ],
             ),
             const SizedBox(height: 8),
-            if (showDeviceInput) ...[
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  labelText: 'Desktop ID (leave empty for any PC)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-              const SizedBox(height: 8),
-            ] else ...[
-              Text(
-                'Поле можно скрыть: команды уйдут на любой включенный ПК. Укажите ID, если нужно выбрать конкретный.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-            ],
+            Text(
+              'Команды отправляются на подключенный ПК через сервер.',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
                 ElevatedButton.icon(
                   icon: const Icon(Icons.login),
-                  label: const Text('Send LOGIN_ON_DESKTOP'),
+                  label: const Text('Отправить вход на ПК'),
                   onPressed: state.isSendingCommand ? null : onSendLogin,
                 ),
                 FilledButton.icon(
                   icon: const Icon(Icons.open_in_new),
-                  label: const Text('Open desktop dashboard'),
+                  label: const Text('Открыть дашборд на ПК'),
                   onPressed: state.isSendingCommand ? null : onOpenDashboard,
                 ),
                 OutlinedButton.icon(
                   icon: const Icon(Icons.computer),
-                  label: const Text('Request desktop sell'),
+                  label: const Text('Запросить продажу на ПК'),
                   onPressed: state.isSendingCommand ? null : onRequestDesktopSell,
                 ),
                 TextButton.icon(
                   icon: const Icon(Icons.shopping_cart_checkout),
-                  label: const Text('Send EXECUTE_DESKTOP_SELL'),
+                  label: const Text('Отправить команду продажи'),
                   onPressed: state.isSendingCommand ? null : onSendSell,
                 ),
                 IconButton.outlined(
-                  tooltip: 'Poll commands for desktop',
+                  tooltip: 'Обновить команды для ПК',
                   icon: const Icon(Icons.sync),
                   onPressed: state.isSendingCommand ? null : onPoll,
                 ),
@@ -419,7 +373,7 @@ class _SyncPanel extends StatelessWidget {
             if (state.pendingCommands.isNotEmpty) ...[
               const SizedBox(height: 10),
               Text(
-                'Pending commands (debug view):',
+                'Ожидающие команды (отладка):',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               ...state.pendingCommands.map(
@@ -433,11 +387,11 @@ class _SyncPanel extends StatelessWidget {
                     children: [
                       TextButton(
                         onPressed: () => onAck(cmd.id, 'ACKNOWLEDGED'),
-                        child: const Text('ACK'),
+                        child: const Text('готово'),
                       ),
                       TextButton(
                         onPressed: () => onAck(cmd.id, 'FAILED'),
-                        child: const Text('FAIL'),
+                        child: const Text('ошибка'),
                       ),
                     ],
                   ),
