@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/utils/formatters.dart';
 import '../../../domain/entities/wallet.dart';
@@ -76,6 +77,9 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                       decimal: true,
                       signed: false,
                     ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                    ],
                     decoration: InputDecoration(
                       hintText: 'Сумма',
                       border: OutlineInputBorder(
@@ -89,14 +93,15 @@ class _WalletPageState extends ConsumerState<WalletPage> {
                   onPressed: state.isProcessing
                       ? null
                       : () async {
-                    final value = double.tryParse(
-                      _amountController.text.replaceAll(',', '.'),
-                    ) ??
-                        0;
-                    if (value <= 0) {
+                    final normalized = _amountController.text
+                        .trim()
+                        .replaceAll(' ', '')
+                        .replaceAll(',', '.');
+                    final value = double.tryParse(normalized);
+                    if (value == null || value <= 0) {
                       AppErrorHandler.showErrorSnackBar(
                         context,
-                        'Enter a valid deposit amount',
+                        'Введите корректную сумму депозита',
                       );
                       return;
                     }
