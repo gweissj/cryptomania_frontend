@@ -38,6 +38,7 @@ class MarketMoversController extends StateNotifier<MarketMoversState> {
         vsCurrency: vsCurrency,
         limit: 15,
         priceSource: 'coingecko',
+        forceRefresh: forceRefresh,
       );
       state = state.copyWith(
         isLoading: false,

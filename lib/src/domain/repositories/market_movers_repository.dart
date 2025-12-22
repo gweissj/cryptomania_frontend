@@ -5,6 +5,7 @@ abstract class MarketMoversRepository {
     required String vsCurrency,
     required int limit,
     String? priceSource,
+    bool forceRefresh = false,
   });
 
   Future<List<MarketMover>> search({

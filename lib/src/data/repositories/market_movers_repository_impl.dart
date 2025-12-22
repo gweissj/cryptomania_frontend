@@ -14,10 +14,12 @@ class MarketMoversRepositoryImpl implements MarketMoversRepository {
     required String vsCurrency,
     required int limit,
     String? priceSource,
+    bool forceRefresh = false,
   }) async {
     final response = await _api.fetchMarketMovers(
       limit: limit,
       source: priceSource,
+      forceRefresh: forceRefresh,
     );
     final movers = response
         .map(

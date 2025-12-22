@@ -79,12 +79,14 @@ class KursachApi {
   Future<List<MarketMoverDto>> fetchMarketMovers({
     int limit = 15,
     String? source,
+    bool forceRefresh = false,
   }) async {
     final response = await _dio.get<List<dynamic>>(
       '/crypto/market-movers',
       queryParameters: {
         'limit': limit,
         if (source != null) 'source': source,
+        if (forceRefresh) 'force_refresh': true,
       },
     );
     final data = response.data ?? [];
