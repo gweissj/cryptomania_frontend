@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
@@ -19,13 +21,20 @@ class TradeController extends StateNotifier<TradeState> {
   TradeController(this._ref, this._assetsRepository, this._walletRepository)
       : super(const TradeState(isLoading: true)) {
     loadAssets();
+    _startPeriodicRefresh();
   }
 
   final Ref _ref;
   final MarketMoversRepository _assetsRepository;
   final WalletRepository _walletRepository;
+  Timer? _timer;
+  String _lastQuery = '';
 
   Future<void> loadAssets({String? query}) async {
+    final resolvedQuery = query ?? _lastQuery;
+    if (query != null) {
+      _lastQuery = query;
+    }
     state = state.copyWith(
       isLoading: true,
       error: null,
@@ -33,12 +42,13 @@ class TradeController extends StateNotifier<TradeState> {
       selectedSource: 'coincap',
     );
     try {
-      final assets = query == null || query.isEmpty
+      final normalizedQuery = resolvedQuery.trim();
+      final assets = normalizedQuery.isEmpty
           ? await _assetsRepository.fetchTopByMarketCap(
               vsCurrency: 'USD',
               limit: 20,
             )
-          : await _assetsRepository.search(query: query, limit: 30);
+          : await _assetsRepository.search(query: normalizedQuery, limit: 30);
       final selected = assets.isNotEmpty ? assets.first : null;
       state = state.copyWith(
         isLoading: false,
@@ -48,6 +58,7 @@ class TradeController extends StateNotifier<TradeState> {
       if (selected != null) {
         await _loadQuotesFor(selected.id);
       }
+      state = state.copyWith(lastUpdated: DateTime.now());
     } catch (error) {
       state = state.copyWith(
         isLoading: false,
@@ -109,6 +120,22 @@ class TradeController extends StateNotifier<TradeState> {
       );
     }
   }
+
+  void _startPeriodicRefresh() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(minutes: 3), (_) {
+      if (!mounted || state.isLoading) {
+        return;
+      }
+      loadAssets(query: _lastQuery);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 }
 
 class TradeState {
@@ -121,6 +148,7 @@ class TradeState {
     this.quotes = const [],
     this.selectedSource = 'coincap',
     this.quotesLoading = false,
+    this.lastUpdated,
     this.error,
     this.lastTrade,
   });
@@ -133,6 +161,7 @@ class TradeState {
   final List<PriceQuote> quotes;
   final String selectedSource;
   final bool quotesLoading;
+  final DateTime? lastUpdated;
   final String? error;
   final TradeExecution? lastTrade;
 
@@ -145,6 +174,7 @@ class TradeState {
     List<PriceQuote>? quotes,
     String? selectedSource,
     bool? quotesLoading,
+    DateTime? lastUpdated,
     Object? error = _sentinel,
     TradeExecution? lastTrade,
   }) {
@@ -157,6 +187,7 @@ class TradeState {
       quotes: quotes ?? this.quotes,
       selectedSource: selectedSource ?? this.selectedSource,
       quotesLoading: quotesLoading ?? this.quotesLoading,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
       error: error == _sentinel ? this.error : error as String?,
       lastTrade: lastTrade ?? this.lastTrade,
     );
