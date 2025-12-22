@@ -8,6 +8,7 @@ import '../../../domain/entities/wallet.dart';
 import '../../../domain/repositories/market_movers_repository.dart';
 import '../../../domain/repositories/wallet_repository.dart';
 import '../../../utils/error_handler.dart';
+import '../../home/controllers/home_controller.dart';
 import '../../wallet/controllers/wallet_controller.dart';
 
 final tradeControllerProvider =
@@ -108,6 +109,7 @@ class TradeController extends StateNotifier<TradeState> {
         priceSource: state.selectedSource,
       );
       _ref.read(walletControllerProvider.notifier).refresh();
+      _ref.read(homeControllerProvider.notifier).refresh();
       state = state.copyWith(
         isProcessing: false,
         lastTrade: result,
@@ -203,11 +205,17 @@ extension _TradeControllerQuotes on TradeController {
       final quotes = await _assetsRepository.fetchQuotes(assetId: assetId);
       final sortedQuotes = [...quotes]
         ..sort((a, b) => a.price.compareTo(b.price));
-      final cheapestSource = sortedQuotes.isNotEmpty ? sortedQuotes.first.source : 'coincap';
+      final currentSource = state.selectedSource.toLowerCase();
+      final keepSelection = sortedQuotes
+          .where((q) => q.source.toLowerCase() == currentSource)
+          .toList();
+      final nextSource = keepSelection.isNotEmpty
+          ? keepSelection.first.source
+          : (sortedQuotes.isNotEmpty ? sortedQuotes.first.source : state.selectedSource);
       state = state.copyWith(
         quotes: sortedQuotes,
         quotesLoading: false,
-        selectedSource: cheapestSource,
+        selectedSource: nextSource,
       );
     } catch (error) {
       state = state.copyWith(
