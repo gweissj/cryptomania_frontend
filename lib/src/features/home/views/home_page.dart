@@ -111,14 +111,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                     onPressed: () =>
                         ref.read(mainTabProvider.notifier).state = MainTab.trade,
                     icon: const Icon(Icons.add_shopping_cart_outlined),
-                    label: const Text('Buy kripto'),
+                    label: const Text('Купить криптовалюту'),
                   ),
                   const SizedBox(height: 12),
                   BalanceSection(data: homeState.dashboard!),
                   const SizedBox(height: 24),
                   SectionHeader(
                     title: 'Маркет - цены валют',
-                    actionLabel: 'More',
+                    actionLabel: 'Больше',
                     onAction: () => context.push(
                       '${AppRoute.marketMovers}/${homeState.dashboard!.currency}',
                     ),
@@ -129,7 +129,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     currency: homeState.dashboard!.currency,
                   ),
                   const SizedBox(height: 24),
-                  const SectionHeader(title: 'Portfolio'),
+                  const SectionHeader(title: 'Портфель'),
                   const SizedBox(height: 12),
                   PortfolioSection(
                     assets: homeState.dashboard!.portfolio,
@@ -176,7 +176,7 @@ class BalanceSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Portfolio Balance',
+            'Баланс портфеля',
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -416,12 +416,12 @@ class PortfolioSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Purchased assets',
+                    'Приобретенные активы',
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${assets.length} items',
+                    '${assets.length} активов',
                     style: Theme.of(context)
                         .textTheme
                         .labelMedium
