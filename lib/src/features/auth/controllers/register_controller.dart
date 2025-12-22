@@ -66,11 +66,8 @@ class RegisterController extends StateNotifier<RegisterState> {
   }
 
   Future<void> submit() async {
-    final firstNameError = ValidationUtils.validateRequired(
-      state.firstName,
-      'Имя',
-    );
-    final lastNameError = ValidationUtils.validateRequired(
+    final firstNameError = ValidationUtils.validateName(state.firstName, 'Имя');
+    final lastNameError = ValidationUtils.validateName(
       state.lastName,
       'Фамилия',
     );

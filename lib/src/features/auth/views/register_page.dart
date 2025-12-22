@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,6 +21,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final nameInputFormatters = <TextInputFormatter>[
+      FilteringTextInputFormatter.allow(RegExp('[A-Za-zА-Яа-яЁё]')),
+    ];
+
     ref.listen<RegisterState>(registerControllerProvider, (previous, next) {
       final profile = next.successProfile;
       if (profile != null) {
@@ -68,6 +73,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 onChanged: controller.onFirstNameChanged,
                 label: 'Имя',
                 placeholder: 'Введите имя',
+                inputFormatters: nameInputFormatters,
                 textInputAction: TextInputAction.next,
                 errorText: state.firstNameError,
               ),
@@ -77,6 +83,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 onChanged: controller.onLastNameChanged,
                 label: 'Фамилия',
                 placeholder: 'Введите фамилию',
+                inputFormatters: nameInputFormatters,
                 textInputAction: TextInputAction.next,
                 errorText: state.lastNameError,
               ),
