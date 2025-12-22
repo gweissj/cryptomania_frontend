@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/app_router.dart';
 import '../../common/widgets/auth_text_field.dart';
-import '../../../utils/error_handler.dart';
 import '../controllers/profile_settings_controller.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
@@ -26,13 +26,21 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
     ) {
       if (next.successProfile != null &&
           next.successProfile != previous?.successProfile) {
-        AppErrorHandler.showErrorSnackBar(context, 'Данные профиля обновлены');
+        final messenger = ScaffoldMessenger.of(context);
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Данные успешно обновлены'),
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(16),
+            ),
+          );
         ref
             .read(profileSettingsControllerProvider.notifier)
             .acknowledgeSuccess();
-        if (context.canPop()) {
-          context.pop();
-        }
+        if (!mounted) return;
+        context.go(AppRoute.home);
       }
     });
 
@@ -61,7 +69,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Отредактируйте личные данные и при необходимости смените пароль.',
+                'Вы можете изменить свои персональные данные и пароль здесь.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -158,45 +166,11 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        'Мы не показываем текущий пароль. Заполните оба поля, если хотите установить новый.',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AuthTextField(
-                        value: state.formattedBirthDate,
-                        onChanged: (_) {},
-                        label: 'Дата рождения',
-                        placeholder: 'Дата указывается при регистрации',
-                        readOnly: true,
-                        enabled: false,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Изменить дату рождения можно через поддержку.',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+
               if (state.generalError != null) ...[
                 const SizedBox(height: 16),
                 Align(
