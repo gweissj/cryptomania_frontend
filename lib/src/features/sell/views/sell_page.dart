@@ -104,18 +104,6 @@ class _SellPageState extends ConsumerState<SellPage> {
                 onSendLogin: () => ref
                     .read(sellControllerProvider.notifier)
                     .dispatchLoginCommand(targetDeviceId: null),
-                onOpenDashboard: () => ref
-                    .read(sellControllerProvider.notifier)
-                    .dispatchOpenDesktopDashboard(
-                    targetDeviceId: null),
-                onRequestDesktopSell: () => ref
-                    .read(sellControllerProvider.notifier)
-                    .requestDesktopSellSession(
-                  targetDeviceId: null,
-                ),
-                onSendSell: () => ref
-                    .read(sellControllerProvider.notifier)
-                    .dispatchSellCommand(targetDeviceId: null),
                 onPoll: () => ref.read(sellControllerProvider.notifier).pollCommands(
                   targetDevice: 'desktop',
                   targetDeviceId: null,
@@ -299,18 +287,12 @@ class _SyncPanel extends StatelessWidget {
   const _SyncPanel({
     required this.state,
     required this.onSendLogin,
-    required this.onOpenDashboard,
-    required this.onRequestDesktopSell,
-    required this.onSendSell,
     required this.onPoll,
     required this.onAck,
   });
 
   final SellState state;
   final VoidCallback onSendLogin;
-  final VoidCallback onOpenDashboard;
-  final VoidCallback onRequestDesktopSell;
-  final VoidCallback onSendSell;
   final VoidCallback onPoll;
   final void Function(int id, String status) onAck;
 
@@ -347,21 +329,6 @@ class _SyncPanel extends StatelessWidget {
                   icon: const Icon(Icons.login),
                   label: const Text('Отправить вход на ПК'),
                   onPressed: state.isSendingCommand ? null : onSendLogin,
-                ),
-                FilledButton.icon(
-                  icon: const Icon(Icons.open_in_new),
-                  label: const Text('Открыть дашборд на ПК'),
-                  onPressed: state.isSendingCommand ? null : onOpenDashboard,
-                ),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.computer),
-                  label: const Text('Запросить продажу на ПК'),
-                  onPressed: state.isSendingCommand ? null : onRequestDesktopSell,
-                ),
-                TextButton.icon(
-                  icon: const Icon(Icons.shopping_cart_checkout),
-                  label: const Text('Отправить команду продажи'),
-                  onPressed: state.isSendingCommand ? null : onSendSell,
                 ),
                 IconButton.outlined(
                   tooltip: 'Обновить команды для ПК',

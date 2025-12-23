@@ -162,34 +162,6 @@ class SellController extends StateNotifier<SellState> {
     );
   }
 
-  Future<void> dispatchSellCommand({String? targetDeviceId}) async {
-    final asset = state.selectedAsset;
-    if (asset == null) {
-      state = state.copyWith(commandError: 'Select an asset before dispatching sell');
-      return;
-    }
-
-    final quantity = double.tryParse(state.quantityInput.replaceAll(',', '.'));
-    final amount = double.tryParse(state.amountInput.replaceAll(',', '.'));
-
-    if ((quantity == null || quantity <= 0) && (amount == null || amount <= 0)) {
-      state = state.copyWith(commandError: 'Provide quantity or USD amount for sell');
-      return;
-    }
-
-    await _dispatchCommand(
-      action: 'EXECUTE_DESKTOP_SELL',
-      payload: {
-        'asset_id': asset.id,
-        if (quantity != null) 'quantity': quantity,
-        if (amount != null) 'amount_usd': amount,
-        'source': state.priceSource,
-      },
-      targetDeviceId: targetDeviceId,
-      ttlSeconds: 120,
-    );
-  }
-
   Future<void> requestDesktopSellSession({String? targetDeviceId}) async {
     final payload = <String, dynamic>{
       'requested_at': DateTime.now().toIso8601String(),
@@ -217,15 +189,6 @@ class SellController extends StateNotifier<SellState> {
       payload: payload,
       targetDeviceId: targetDeviceId,
       ttlSeconds: 300,
-    );
-  }
-
-  Future<void> dispatchOpenDesktopDashboard({String? targetDeviceId}) async {
-    await _dispatchCommand(
-      action: 'OPEN_DESKTOP_DASHBOARD',
-      payload: {'view': 'sell'},
-      targetDeviceId: targetDeviceId,
-      ttlSeconds: 120,
     );
   }
 
